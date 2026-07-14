@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMDSS — Decision Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.44.0/tabler-icons.min.css">
+<style>
+  :root{
+    --red:#C8102E; --red-dark:#9A0C23; --orange:#F4841F; --blue:#2563EB;
+    --green:#16A34A; --amber:#D97706;
+    --ink:#181614; --ink-2:#5B5852; --ink-3:#928E86;
+    --line:#EAE7E1; --page:#F7F5F2; --card:#FFFFFF;
+    --red-tint:#FCE9EC; --red-fg:#9A0C23;
+    --orange-tint:#FEF0E2; --orange-fg:#A15D0E;
+    --amber-tint:#FEF3E2; --amber-fg:#8A5A05;
+    --green-tint:#E9F7EF; --green-fg:#166534;
+    --blue-tint:#EAF0FE; --blue-fg:#2563EB;
+    --shadow: 0 8px 24px rgba(24,22,20,0.08);
+    --font-display:'Plus Jakarta Sans', sans-serif;
+    --font-body:'Inter', sans-serif;
+  }
+  html[data-theme="dark"]{
+    --ink:#F2EFEA; --ink-2:#B9B6AF; --ink-3:#8B8781;
+    --line:#332F29; --page:#131110; --card:#1D1A17;
+    --red-tint:rgba(200,16,46,0.20); --red-fg:#FF8FA0;
+    --orange-tint:rgba(244,132,31,0.20); --orange-fg:#FFB870;
+    --amber-tint:rgba(217,119,6,0.20); --amber-fg:#FFC876;
+    --green-tint:rgba(22,163,74,0.22); --green-fg:#6EE7A8;
+    --blue-tint:rgba(37,99,235,0.22); --blue-fg:#8FB4FF;
+    --shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:var(--font-body); background:var(--page); color:var(--ink); -webkit-font-smoothing:antialiased; transition:background .2s, color .2s; }
+  .app{ display:grid; grid-template-columns:232px 1fr; min-height:100vh; }
+  .app > .main{ min-width:0; }
+  button{ font-family:var(--font-body); cursor:pointer; }
+  button:active{ transform:scale(0.97); }
+
+  /* SIDEBAR */
+  .sidebar{ background:#0F5132; color:#fff; padding:20px 14px; display:flex; flex-direction:column; gap:4px; position:relative; }
+  html[data-theme="dark"] .sidebar{ background:#0A3D26; }
+  .brand{ display:flex; align-items:center; gap:10px; padding:6px 8px 22px; }
+  .brand-mark{ width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--red),var(--orange)); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; font-size:14px; flex-shrink:0; }
+  .brand-name{ font-family:var(--font-display); font-weight:700; font-size:14.5px; line-height:1.15; }
+  .brand-sub{ font-size:10.5px; color:#9A968D; letter-spacing:.03em; margin-top:2px; }
+  .nav-label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:#77746C; padding:14px 10px 6px; }
+  .nav-item{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; font-size:13.5px; color:#C9C6BF; border:none; background:none; width:100%; text-align:left; transition:background .12s; }
+  .nav-item i{ font-size:17px; }
+  .nav-item.active{ background:rgba(200,16,46,0.9); color:#fff; font-weight:500; }
+  .nav-item:not(.active):hover{ background:rgba(255,255,255,0.08); }
+  .sidebar-foot{ margin-top:auto; padding-top:16px; border-top:1px solid rgba(255,255,255,0.08); position:relative; }
+  .sidebar-user{ display:flex; align-items:center; gap:9px; padding:8px 8px; border:none; background:none; width:100%; border-radius:8px; }
+  .sidebar-user:hover{ background:rgba(255,255,255,0.08); }
+  .avatar{ width:30px; height:30px; border-radius:50%; background:var(--orange); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:700; color:#fff; }
+  .u-name{ font-size:12.5px; font-weight:500; color:#EDEBE7; text-align:left; }
+  .u-role{ font-size:10.5px; color:#8A8780; text-align:left; }
+
+  /* MAIN */
+  .main{ padding:22px 30px 60px; display:flex; flex-direction:column; gap:20px; max-width:1400px; }
+  .section{ display:flex; flex-direction:column; gap:20px; }
+  .section.hidden{ display:none; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; }
+  .topbar h1{ font-family:var(--font-display); font-size:21px; font-weight:700; }
+  .eyebrow{ font-size:12px; color:var(--ink-3); font-weight:500; margin-bottom:2px; }
+  .top-actions{ display:flex; align-items:center; gap:10px; position:relative; }
+  .search{ display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:8px 12px; width:230px; }
+  .search input{ border:none; outline:none; font-size:12.5px; background:transparent; width:100%; font-family:var(--font-body); color:var(--ink); }
+  .search i{ color:var(--ink-3); font-size:15px; }
+  .icon-btn{ width:36px; height:36px; border-radius:9px; border:1px solid var(--line); background:var(--card); display:flex; align-items:center; justify-content:center; position:relative; color:var(--ink-2); }
+  .icon-btn:hover{ border-color:var(--ink-3); }
+  .icon-btn .dot{ position:absolute; top:7px; right:7px; width:6px; height:6px; border-radius:50%; background:var(--red); }
+  .avatar-btn{ border:none; background:none; padding:0; }
+
+  /* dropdowns */
+  .dropdown{ position:absolute; top:44px; right:0; width:280px; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:8px; z-index:40; display:none; }
+  .dropdown.open{ display:block; }
+  .dropdown-head{ font-size:12px; font-weight:600; padding:8px 10px; color:var(--ink-2); }
+  .dropdown-item{ display:flex; gap:10px; align-items:flex-start; padding:9px 10px; border-radius:8px; font-size:12.5px; }
+  .dropdown-item:hover{ background:var(--page); }
+  .dropdown-item .t{ font-weight:600; }
+  .dropdown-item .s{ color:var(--ink-3); font-size:11px; margin-top:2px; }
+  .dropdown-x{ margin-left:auto; border:none; background:none; color:var(--ink-3); font-size:15px; padding:2px; flex-shrink:0; }
+  .dropdown-x:hover{ color:var(--ink); }
+  .settings-row{ display:flex; align-items:center; justify-content:space-between; padding:9px 10px; font-size:12.5px; }
+  .switch{ width:34px; height:19px; border-radius:999px; background:var(--line); border:none; position:relative; flex-shrink:0; }
+  .switch::after{ content:""; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .switch.on{ background:var(--red); }
+  .switch.on::after{ transform:translateX(15px); }
+  .dropdown-link{ display:block; width:100%; text-align:left; border:none; background:none; padding:9px 10px; border-radius:8px; font-size:12.5px; color:var(--ink); }
+  .dropdown-link:hover{ background:var(--page); }
+
+  /* COPILOT BANNER */
+  .copilot{ background:linear-gradient(90deg, var(--ink) 0%, #2A2622 100%); border-radius:14px; padding:18px 22px; display:flex; gap:16px; align-items:flex-start; color:#fff; }
+  html[data-theme="dark"] .copilot{ background:linear-gradient(90deg, #0D0C0A 0%, #221E19 100%); }
+  .copilot-icon{ width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg,var(--red),var(--orange)); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .copilot-icon i{ font-size:19px; }
+  .copilot-label{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--orange); font-weight:600; margin-bottom:5px; }
+  .copilot-text{ font-size:14.5px; line-height:1.55; color:#F1EFEA; max-width:800px; }
+  .copilot-text b{ font-weight:600; color:#fff; }
+  .copilot-cta{ margin-left:auto; background:var(--red); color:#fff; border:none; padding:9px 16px; border-radius:8px; font-size:12.5px; font-weight:600; white-space:nowrap; flex-shrink:0; }
+  .copilot-cta:hover{ background:var(--red-dark); }
+
+  /* KPI ROW */
+  .kpi-row{ display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:14px; }
+  .kpi-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; transition:box-shadow .15s, border-color .15s; }
+  .kpi-card:hover{ box-shadow:var(--shadow); border-color:var(--ink-3); }
+  .kpi-top{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+  .kpi-title{ font-size:12.5px; color:var(--ink-2); font-weight:500; }
+  .kpi-icon{ width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+  .kpi-value{ font-family:var(--font-display); font-size:27px; font-weight:700; line-height:1; margin-bottom:8px; transition:transform .15s ease; }
+  .kpi-card:hover .kpi-value{ transform:translateX(2px); }
+  .kpi-trend{ font-size:11.5px; font-weight:500; display:flex; align-items:center; gap:4px; margin-bottom:5px; }
+  .kpi-note{ font-size:11.5px; color:var(--ink-3); line-height:1.4; }
+  .up{ color:var(--green); } .down{ color:var(--red); }
+
+  /* SCHEDULED TAB */
+  .sched-list{ display:flex; flex-direction:column; gap:10px; }
+  .sched-card{ display:flex; align-items:center; gap:14px; padding:13px 14px; border:1px solid var(--line); border-radius:11px; background:var(--page); transition:border-color .15s; }
+  .sched-card:hover{ border-color:var(--ink-3); }
+  .sched-icon{ width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+  .sched-body{ flex:1; min-width:0; }
+  .sched-title{ font-size:13.5px; font-weight:600; }
+  .sched-sub{ font-size:11.5px; color:var(--ink-3); margin-top:2px; }
+  .sched-meta{ display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+  .sched-ts{ font-size:11px; color:var(--ink-3); white-space:nowrap; }
+  .sched-empty{ text-align:center; padding:44px 20px; color:var(--ink-3); font-size:13px; }
+  .sched-empty i{ font-size:26px; display:block; margin-bottom:8px; }
+  .sched-stats{ display:flex; gap:10px; flex-wrap:wrap; }
+  .sched-stat{ display:flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:7px 12px; font-size:12px; color:var(--ink-2); }
+  .sched-stat b{ font-family:var(--font-display); font-size:14px; color:var(--ink); }
+
+  /* GENERIC PANEL */
+  .panel{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; min-width:0; }
+  .panel-head{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; gap:12px; }
+  .panel-title{ font-family:var(--font-display); font-size:15px; font-weight:700; }
+  .panel-sub{ font-size:11.5px; color:var(--ink-3); margin-top:3px; }
+  .panel-link{ font-size:12px; color:var(--blue); font-weight:500; background:none; border:none; white-space:nowrap; }
+  .panel-link:hover{ text-decoration:underline; }
+
+  .center-row{ display:grid; grid-template-columns:1.55fr 1fr; gap:16px; align-items:stretch; }
+  .legend-row{ display:flex; gap:14px; font-size:11.5px; color:var(--ink-2); flex-wrap:wrap; }
+  .legend-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+
+  .tint-critical{ background:var(--red-tint); color:var(--red-fg); }
+  .tint-high{ background:var(--orange-tint); color:var(--orange-fg); }
+  .tint-medium{ background:var(--amber-tint); color:var(--amber-fg); }
+  .tint-low{ background:var(--green-tint); color:var(--green-fg); }
+  .tint-info{ background:var(--blue-tint); color:var(--blue-fg); }
+
+  .rec-badge{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:3px 9px; border-radius:999px; }
+  .rec-top{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .rec-machine{ font-family:var(--font-display); font-size:16px; font-weight:700; }
+  .rec-body{ font-size:12.5px; color:var(--ink-2); line-height:1.6; margin-bottom:14px; }
+  .rec-stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .rec-stat{ background:var(--orange-tint); border-radius:10px; padding:10px 12px; }
+  .rec-stat .l{ font-size:10.5px; color:var(--orange-fg); font-weight:600; }
+  .rec-stat .v{ font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--orange-fg); }
+  .rec-btn{ width:100%; background:var(--red); color:#fff; border:none; padding:11px; border-radius:9px; font-size:13px; font-weight:600; }
+  .rec-btn:hover{ background:var(--red-dark); }
+  .rec-btn-ghost{ width:100%; background:var(--card); color:var(--ink); border:1px solid var(--line); padding:10px; border-radius:9px; font-size:12.5px; font-weight:500; margin-top:8px; }
+  .rec-btn-ghost:hover{ border-color:var(--ink-3); }
+  .rec-scheduled{ display:flex; align-items:center; gap:8px; background:var(--green-tint); color:var(--green-fg); border-radius:9px; padding:11px; font-size:13px; font-weight:600; justify-content:center; }
+
+  table{ width:100%; border-collapse:collapse; }
+  th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-3); font-weight:600; padding:8px 10px; border-bottom:1px solid var(--line); }
+  td{ padding:12px 10px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle; }
+  tr:last-child td{ border-bottom:none; }
+  tr.row-flash{ animation:flash 1.1s ease; }
+  @keyframes flash{ 0%{ background:var(--orange-tint); } 100%{ background:transparent; } }
+  tbody tr{ transition:transform .15s ease, box-shadow .15s ease, background .15s ease; }
+  tbody tr[data-asset]:hover{ background:var(--page); transform:scale(1.004); box-shadow:var(--shadow); position:relative; z-index:1; }
+  .machine-cell{ display:flex; align-items:center; gap:10px; border:none; background:none; text-align:left; padding:0; }
+  .machine-cell:hover .machine-name{ color:var(--red); }
+  .machine-ico{ width:32px; height:32px; border-radius:8px; background:var(--page); display:flex; align-items:center; justify-content:center; color:var(--ink-2); font-size:15px; flex-shrink:0; }
+  .machine-name{ font-weight:600; font-size:13px; }
+  .machine-id{ font-size:11px; color:var(--ink-3); }
+  .prio-badge{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .impact-bar-track{ width:64px; height:5px; border-radius:3px; background:var(--line); overflow:hidden; display:inline-block; vertical-align:middle; margin-right:8px; }
+  .impact-bar-fill{ height:100%; border-radius:3px; width:0; transition:width .8s cubic-bezier(.4,0,.2,1); }
+  .act-btn{ font-size:12px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; white-space:nowrap; }
+  .act-red{ background:var(--red); color:#fff; }
+  .act-red:hover{ background:var(--red-dark); }
+  .act-outline{ background:var(--card); border:1px solid var(--line); color:var(--ink); }
+  .act-outline:hover{ border-color:var(--ink-3); }
+  .act-done{ background:var(--green-tint); color:var(--green-fg); border:none; }
+  .act-btn, .rec-btn, .modal-confirm{ transition:background .15s, opacity .15s, transform .1s; }
+  .act-btn:disabled, .rec-btn:disabled, .modal-confirm:disabled{ opacity:.75; cursor:not-allowed; }
+
+  /* SPINNER */
+  .spinner{ width:13px; height:13px; border:2px solid rgba(255,255,255,0.35); border-radius:50%; border-top-color:#fff; display:inline-block; animation:spin .7s linear infinite; vertical-align:-2px; }
+  .spinner.dark{ border:2px solid rgba(24,22,20,0.15); border-top-color:var(--ink); }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .timeline-wrap{ display:flex; gap:0; overflow-x:auto; padding-top:6px; }
+  .tl-item{ flex:1; min-width:150px; position:relative; padding:0 14px 4px 0; border:none; background:none; text-align:left; }
+  .tl-item:not(:last-child)::after{ content:""; position:absolute; top:16px; right:0; width:100%; height:2px; background:var(--line); }
+  .tl-item:hover .tl-title{ color:var(--red); }
+  .tl-dot{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; font-family:var(--font-display); position:relative; z-index:1; margin-bottom:10px; }
+  .tl-week{ font-size:11px; color:var(--ink-3); font-weight:600; text-transform:uppercase; margin-bottom:3px; }
+  .tl-title{ font-size:12.5px; font-weight:600; margin-bottom:3px; }
+  .tl-note{ font-size:11px; color:var(--ink-2); line-height:1.4; }
+
+  .split-row{ display:grid; grid-template-columns:1fr 1.2fr; gap:16px; }
+  .factor-row{ display:flex; align-items:center; gap:10px; margin-bottom:13px; }
+  .factor-row:last-child{ margin-bottom:0; }
+  .factor-label{ font-size:12.5px; width:150px; flex-shrink:0; color:var(--ink); }
+  .factor-track{ flex:1; height:8px; border-radius:4px; background:var(--page); overflow:hidden; }
+  .factor-fill{ height:100%; border-radius:4px; background:linear-gradient(90deg,var(--orange),var(--red)); width:0; transition:width 1s cubic-bezier(.4,0,.2,1); }
+  .factor-pct{ font-size:12px; font-weight:700; width:32px; text-align:right; color:var(--ink-2); }
+
+  .health-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:10px; }
+  .health-tile{ border-radius:12px; padding:12px 13px; border:1px solid var(--line); text-align:left; background:var(--card); transition:box-shadow .15s, transform .15s, border-color .15s; }
+  .health-tile:hover{ box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--ink-3); }
+  .health-tile .hname{ font-size:12.5px; font-weight:600; margin-bottom:2px; color:var(--ink); }
+  .health-tile .hsite{ font-size:10.5px; color:var(--ink-3); margin-bottom:10px; }
+  .health-tile .hscore{ font-family:var(--font-display); font-size:20px; font-weight:700; }
+  .health-tile .hstatus{ font-size:10.5px; font-weight:600; margin-top:2px; }
+
+  .sensor-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .sensor-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 14px; text-align:left; transition:box-shadow .15s, transform .15s, border-color .15s; }
+  .sensor-card:hover{ box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--ink-3); }
+  .sensor-name{ font-size:12px; font-weight:600; margin-bottom:9px; display:flex; align-items:center; gap:6px; color:var(--ink); }
+  .sensor-name i{ font-size:14px; color:var(--ink-3); }
+  .sensor-metric{ display:flex; align-items:baseline; justify-content:space-between; padding:4px 0; font-size:11.5px; color:var(--ink-2); }
+  .sensor-metric b{ font-family:var(--font-display); font-size:13px; color:var(--ink); font-weight:700; }
+
+  .analytics-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .chart-box{ position:relative; height:210px; margin-top:6px; }
+
+  /* DRAWER */
+  .scrim{ position:fixed; inset:0; background:rgba(10,9,8,0.45); z-index:60; opacity:0; pointer-events:none; transition:opacity .18s; }
+  .scrim.open{ opacity:1; pointer-events:auto; }
+  .drawer{ position:fixed; top:0; right:0; height:100vh; width:400px; max-width:92vw; background:var(--card); z-index:61; box-shadow:var(--shadow); transform:translateX(100%); transition:transform .22s ease; padding:22px; overflow-y:auto; }
+  .drawer.open{ transform:translateX(0); }
+  .drawer-close{ position:absolute; top:18px; right:18px; border:none; background:var(--page); width:30px; height:30px; border-radius:8px; color:var(--ink-2); font-size:16px; }
+  .drawer h2{ font-family:var(--font-display); font-size:19px; font-weight:700; margin-bottom:3px; }
+  .drawer .dsub{ font-size:12px; color:var(--ink-3); margin-bottom:18px; }
+  .drawer-section{ margin-bottom:18px; }
+  .drawer-section h4{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); margin-bottom:8px; font-weight:600; }
+
+  /* MODAL */
+  .modal-wrap{ position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; background:rgba(10,9,8,0.45); backdrop-filter:blur(3px); opacity:0; visibility:hidden; transition:opacity .18s ease, visibility .18s; }
+  .modal-wrap.open{ opacity:1; visibility:visible; }
+  .modal{ background:var(--card); border-radius:14px; width:380px; max-width:90vw; padding:22px; box-shadow:var(--shadow); transform:scale(0.95) translateY(10px); transition:transform .2s cubic-bezier(.4,0,.2,1); }
+  .modal-wrap.open .modal{ transform:scale(1) translateY(0); }
+  .modal h3{ font-family:var(--font-display); font-size:16px; font-weight:700; margin-bottom:8px; }
+  .modal p{ font-size:12.5px; color:var(--ink-2); line-height:1.6; margin-bottom:18px; }
+  .modal-actions{ display:flex; gap:10px; }
+  .modal-actions button{ flex:1; padding:10px; border-radius:9px; font-size:13px; font-weight:600; border:none; }
+  .modal-cancel{ background:var(--page); color:var(--ink); border:1px solid var(--line) !important; }
+  .modal-confirm{ background:var(--red); color:#fff; }
+  .modal-confirm:hover{ background:var(--red-dark); }
+
+  /* TOAST */
+  .toast-stack{ position:fixed; bottom:22px; right:22px; display:flex; flex-direction:column; gap:8px; z-index:80; }
+  .toast{ background:var(--ink); color:#fff; padding:12px 16px; border-radius:10px; font-size:12.5px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow); animation:toastIn .28s cubic-bezier(.4,0,.2,1); max-width:300px; border-left:3px solid var(--green); }
+  html[data-theme="dark"] .toast{ background:#2A2622; }
+  .toast i{ color:var(--green); font-size:16px; flex-shrink:0; }
+  .toast.info{ border-left-color:var(--blue); } .toast.info i{ color:var(--blue); }
+  .toast.warning{ border-left-color:var(--orange); } .toast.warning i{ color:var(--orange); }
+  .toast.success{ border-left-color:var(--green); } .toast.success i{ color:var(--green); }
+  @keyframes toastIn{ from{ opacity:0; transform:translateX(40px);} to{ opacity:1; transform:translateX(0);} }
+  .toast.leaving{ animation:toastOut .2s ease forwards; }
+  @keyframes toastOut{ to{ opacity:0; transform:translateX(40px);} }
+
+  /* DIGITAL TWIN */
+  .twin-flow{ display:flex; align-items:stretch; gap:0; overflow-x:auto; padding:8px 2px 14px; }
+  .twin-node{ display:flex; flex-direction:column; align-items:center; gap:8px; border:none; background:none; text-align:center; padding:6px 14px; min-width:120px; flex-shrink:0; }
+  .twin-node-icon{ width:56px; height:56px; border-radius:16px; background:var(--card); border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:24px; color:var(--ink-2); position:relative; transition:box-shadow .15s, transform .15s, border-color .15s; }
+  .twin-node:hover .twin-node-icon{ box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--ink-3); }
+  .twin-status-dot{ position:absolute; top:-3px; right:-3px; width:14px; height:14px; border-radius:50%; border:2.5px solid var(--card); }
+  .twin-status-dot.st-ok{ background:var(--green); }
+  .twin-status-dot.st-watch{ background:var(--orange); }
+  .twin-status-dot.st-crit{ background:var(--red); animation:pulseDot 1.4s ease-in-out infinite; }
+  @keyframes pulseDot{ 0%,100%{ box-shadow:0 0 0 0 rgba(200,16,46,0.5); } 50%{ box-shadow:0 0 0 5px rgba(200,16,46,0); } }
+  .twin-node-name{ font-size:12px; font-weight:600; color:var(--ink); line-height:1.3; }
+  .twin-node-score{ font-size:11px; font-weight:700; color:var(--ink-3); }
+  .twin-connector{ flex:0 0 34px; align-self:center; height:2px; background:var(--line); position:relative; margin-top:-30px; }
+  .twin-connector::after{ content:"›"; position:absolute; right:-6px; top:50%; transform:translateY(-50%); font-size:18px; font-weight:700; color:var(--ink-3); line-height:1; }
+
+  /* SCENARIO SIMULATOR */
+  .scenario-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:12px; }
+  .scenario-chip{ display:flex; align-items:flex-start; gap:11px; text-align:left; background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:13px 14px; transition:box-shadow .15s, transform .15s, border-color .15s; }
+  .scenario-chip:hover{ box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--ink-3); }
+  .scenario-chip.active{ border-color:var(--red); background:var(--red-tint); }
+  .scenario-chip-icon{ width:34px; height:34px; border-radius:9px; background:var(--orange-tint); color:var(--orange-fg); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .scenario-chip.active .scenario-chip-icon{ background:var(--red); color:#fff; }
+  .scenario-chip-title{ font-size:12.5px; font-weight:700; margin-bottom:2px; }
+  .scenario-chip-sub{ font-size:11px; color:var(--ink-3); line-height:1.4; }
+  .sim-banner{ display:flex; align-items:center; gap:12px; background:var(--red-tint); color:var(--red-fg); border-radius:12px; padding:13px 16px; font-size:12.5px; font-weight:500; }
+  .sim-banner i{ font-size:18px; flex-shrink:0; }
+  .sim-banner b{ font-weight:700; }
+  .sim-reset-btn{ margin-left:auto; background:var(--card); border:1px solid currentColor; color:var(--red-fg); padding:8px 14px; border-radius:8px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .sim-reset-btn:hover{ background:var(--red-fg); color:#fff; }
+  .sim-idle{ display:flex; align-items:center; gap:12px; background:var(--page); border:1px dashed var(--line); color:var(--ink-3); border-radius:12px; padding:13px 16px; font-size:12.5px; }
+
+  /* AI COPILOT PAGE */
+  .copilot-big{ background:linear-gradient(90deg, var(--ink) 0%, #2A2622 100%); border-radius:16px; padding:24px 26px; color:#fff; }
+  html[data-theme="dark"] .copilot-big{ background:linear-gradient(90deg, #0D0C0A 0%, #221E19 100%); }
+  .copilot-big-top{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .copilot-big-title{ font-family:var(--font-display); font-size:16px; font-weight:700; }
+  .copilot-big-text{ font-size:14.5px; line-height:1.65; color:#F1EFEA; max-width:820px; }
+  .copilot-big-text b{ font-weight:600; color:#fff; }
+  .prompt-chip-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+  .prompt-chip{ background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18); color:#fff; padding:8px 13px; border-radius:999px; font-size:12px; font-weight:500; }
+  .prompt-chip:hover{ background:rgba(255,255,255,0.18); }
+
+  .chat-panel{ display:flex; flex-direction:column; height:440px; }
+  .chat-messages{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:4px 2px 12px; }
+  .chat-row{ display:flex; gap:9px; align-items:flex-start; }
+  .chat-row.user{ flex-direction:row-reverse; }
+  .chat-avatar{ width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; }
+  .chat-avatar.bot{ background:linear-gradient(135deg,var(--red),var(--orange)); color:#fff; }
+  .chat-avatar.user{ background:var(--page); border:1px solid var(--line); color:var(--ink-2); }
+  .chat-bubble{ max-width:74%; padding:10px 13px; border-radius:12px; font-size:12.5px; line-height:1.55; }
+  .chat-row.bot .chat-bubble{ background:var(--page); color:var(--ink); border-bottom-left-radius:3px; }
+  .chat-row.user .chat-bubble{ background:var(--red); color:#fff; border-bottom-right-radius:3px; }
+  .chat-bubble b{ font-weight:700; }
+  .chat-typing{ display:inline-flex; gap:3px; padding:3px 0; }
+  .chat-typing span{ width:5px; height:5px; border-radius:50%; background:var(--ink-3); animation:typingBounce 1s infinite ease-in-out; }
+  .chat-typing span:nth-child(2){ animation-delay:.15s; } .chat-typing span:nth-child(3){ animation-delay:.3s; }
+  @keyframes typingBounce{ 0%,60%,100%{ transform:translateY(0); opacity:.5; } 30%{ transform:translateY(-4px); opacity:1; } }
+  .chat-input-row{ display:flex; gap:8px; margin-top:10px; border-top:1px solid var(--line); padding-top:12px; }
+  .chat-input-row input{ flex:1; border:1px solid var(--line); background:var(--page); border-radius:9px; padding:11px 13px; font-size:12.5px; font-family:var(--font-body); color:var(--ink); outline:none; }
+  .chat-input-row input:focus{ border-color:var(--ink-3); }
+  .chat-send-btn{ width:40px; height:40px; border-radius:9px; background:var(--red); border:none; color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .chat-send-btn:hover{ background:var(--red-dark); }
+
+  /* SENSOR STATUS CARDS (plant-wide) */
+  .sensorstat-row{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  .sensorstat-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 15px; text-align:left; transition:box-shadow .15s, transform .15s, border-color .15s; }
+  .sensorstat-card:hover{ box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--ink-3); }
+  .sensorstat-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .sensorstat-icon{ width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .sensorstat-name{ font-size:11.5px; font-weight:600; color:var(--ink-2); }
+  .sensorstat-value{ font-family:var(--font-display); font-size:19px; font-weight:700; margin-bottom:4px; }
+  .sensorstat-src{ font-size:10.5px; color:var(--ink-3); }
+  .sensorstat-badge{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:2px 8px; border-radius:999px; display:inline-block; margin-top:7px; }
+
+  /* MPI BREAKDOWN */
+  .mpi-score-row{ display:flex; align-items:center; gap:14px; margin-bottom:16px; padding:12px 14px; background:var(--page); border-radius:11px; }
+  .mpi-score-big{ font-family:var(--font-display); font-weight:800; font-size:30px; line-height:1; }
+  .mpi-score-label{ font-size:11px; color:var(--ink-3); font-weight:600; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
+  .mpi-breakdown-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+  .mpi-sub{ background:var(--page); border-radius:10px; padding:10px 12px; }
+  .mpi-sub .lab{ font-size:10.5px; font-weight:600; color:var(--ink-2); display:flex; justify-content:space-between; margin-bottom:6px; }
+  .mpi-sub .lab span:last-child{ color:var(--ink-3); font-weight:500; }
+  .mpi-sub-bar{ height:6px; border-radius:99px; background:var(--line); overflow:hidden; }
+  .mpi-sub-fill{ height:100%; border-radius:99px; width:0; transition:width 1s cubic-bezier(.4,0,.2,1); }
+  .fill-ecs{ background:var(--blue); } .fill-ecrs{ background:var(--orange); }
+  .fill-mcs{ background:var(--amber); } .fill-erts{ background:#8B5CF6; }
+  .mpi-table-wrap{ overflow-x:auto; }
+  .mpi-table{ min-width:880px; width:100%; border-collapse:collapse; }
+  .mpi-table thead th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-3); font-weight:600; padding:12px 14px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  .mpi-table tbody td{ padding:12px 14px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle; }
+  .mpi-table tbody tr:last-child td{ border-bottom:none; }
+  .mpi-eq-name{ font-weight:700; font-family:var(--font-display); font-size:13.5px; }
+  .mpi-eq-cause{ font-size:11px; color:var(--ink-3); margin-top:2px; }
+  .scorecell{ display:flex; flex-direction:column; gap:5px; min-width:100px; }
+  .scorecell .n{ font-size:12px; font-weight:600; display:flex; justify-content:space-between; }
+  .scorecell .n span:last-child{ color:var(--ink-3); font-weight:500; }
+  .bar{ height:6px; border-radius:99px; background:var(--line); overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:99px; }
+  .mpi-val-cell{ text-align:left; }
+  .mpi-val{ font-family:var(--font-display); font-weight:800; font-size:18px; }
+  .justif-box{ background:var(--blue-tint); border-radius:10px; padding:11px 13px; font-size:12px; color:var(--blue-fg); line-height:1.55; margin-bottom:14px; }
+  .justif-box b{ font-weight:700; }
+
+  /* FILTERS */
+  .filter-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:2px; }
+  .filter-chip{ font-size:11.5px; font-weight:600; padding:6px 13px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-2); }
+  .filter-chip:hover{ border-color:var(--ink-3); }
+  .filter-chip.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+
+  /* DECISION LOG */
+  .log-row{ display:grid; grid-template-columns:120px 1fr 110px 90px 130px; gap:10px; padding:10px 4px; border-bottom:1px solid var(--line); font-size:12px; align-items:center; }
+  .log-row:last-child{ border-bottom:none; }
+  .log-row.head{ font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-3); font-weight:600; }
+  .log-time{ color:var(--ink-3); font-size:11.5px; }
+  .log-eng{ display:flex; align-items:center; gap:7px; }
+  .log-eng .mini-avatar{ width:20px; height:20px; border-radius:50%; background:var(--orange); color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  @media (max-width:1100px){
+    .kpi-row, .center-row, .split-row, .analytics-row, .sensor-row, .scenario-grid, .sensorstat-row, .mpi-breakdown-grid{ grid-template-columns:1fr; }
+    .log-row{ grid-template-columns:1fr 1fr; row-gap:4px; }
+  }
+
+  /* MPI TABLE — mobile card layout (no horizontal scroll, buttons stay full-size) */
+  @media (max-width:900px){
+    .mpi-table-wrap{ overflow-x:visible; }
+    .mpi-table{ min-width:0; }
+    .mpi-table thead{ display:none; }
+    .mpi-table, .mpi-table tbody, .mpi-table tr, .mpi-table td{ display:block; width:100%; }
+    .mpi-table tr{ border:1px solid var(--line); border-radius:12px; padding:4px 14px; margin-bottom:12px; }
+    .mpi-table tr:last-child{ margin-bottom:0; }
+    .mpi-table td{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 0; border-bottom:1px solid var(--line); text-align:right; }
+    .mpi-table td:last-child{ border-bottom:none; }
+    .mpi-table td::before{ content:attr(data-label); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-3); text-align:left; flex-shrink:0; }
+    .mpi-table td .scorecell{ align-items:flex-end; min-width:0; width:140px; }
+    .mpi-table td .act-btn{ width:100%; padding:10px 14px; }
+    .mpi-table td[data-label="Equipment"]{ justify-content:flex-start; }
+    .mpi-table td[data-label="Equipment"]::before{ display:none; }
+    .mpi-table td[data-label="Equipment"] .machine-cell{ width:100%; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">FR</div>
+      <div>
+        <div class="brand-name">IMDSS</div>
+        <div class="brand-sub">Prioritize &middot; Decide &middot; Maintain</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Workspace</div>
+    <button class="nav-item active" data-tab="decision"><i class="ti ti-sparkles"></i>Decision Center</button>
+    <button class="nav-item" data-tab="dashboard"><i class="ti ti-layout-dashboard"></i>Dashboard</button>
+    <button class="nav-item" data-tab="twin"><i class="ti ti-map-2"></i>Digital Twin</button>
+    <button class="nav-item" data-tab="assets"><i class="ti ti-cpu"></i>Assets</button>
+    <button class="nav-item" data-tab="maintenance"><i class="ti ti-tool"></i>Maintenance</button>
+    <button class="nav-item" data-tab="scheduled"><i class="ti ti-calendar-event"></i>Scheduled</button>
+    <button class="nav-item" data-tab="simulator"><i class="ti ti-player-play"></i>Scenario Simulator</button>
+    <button class="nav-item" data-tab="reports"><i class="ti ti-chart-bar"></i>Reports</button>
+    <button class="nav-item" data-tab="copilot"><i class="ti ti-robot"></i>Decision Assistant</button>
+
+    <div class="nav-label">System</div>
+    <button class="nav-item" id="navAlerts"><i class="ti ti-bell"></i>Alerts</button>
+    <button class="nav-item" id="navSettings"><i class="ti ti-settings"></i>Settings</button>
+
+    <div class="sidebar-foot">
+      <button class="sidebar-user" id="userBtn">
+        <div class="avatar" id="sidebarAvatar">–</div>
+        <div>
+          <div class="u-name" id="sidebarUName">–</div>
+          <div class="u-role" id="sidebarURole">–</div>
+        </div>
+      </button>
+      <div class="dropdown" id="userDropdown" style="top:auto; bottom:52px; left:0; right:auto;">
+        <button class="dropdown-link"><i class="ti ti-user" style="margin-right:8px;"></i>View profile</button>
+        <button class="dropdown-link"><i class="ti ti-adjustments" style="margin-right:8px;"></i>Preferences</button>
+        <button class="dropdown-link" id="logoutBtn"><i class="ti ti-logout" style="margin-right:8px;"></i>Sign out</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Obajana plant &middot; Line 1</div>
+        <h1 id="pageTitle">Decision Center</h1>
+      </div>
+      <div class="top-actions">
+        <div class="search"><i class="ti ti-search"></i><input id="searchInput" placeholder="Search assets, work orders…"></div>
+
+        <div style="position:relative;">
+          <button class="icon-btn" id="bellBtn"><i class="ti ti-bell"></i><span class="dot" id="bellDot"></span></button>
+          <div class="dropdown" id="bellDropdown">
+            <div class="dropdown-head">Active alerts</div>
+            <div id="alertList"></div>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <button class="icon-btn" id="settingsBtn"><i class="ti ti-settings"></i></button>
+          <div class="dropdown" id="settingsDropdown">
+            <div class="dropdown-head">Preferences</div>
+            <div class="settings-row"><span>Dark mode</span><button class="switch" id="darkToggle"></button></div>
+            <div class="settings-row"><span>Desktop notifications</span><button class="switch on" id="notifToggle"></button></div>
+            <div class="settings-row"><span>Auto-refresh (15 min)</span><button class="switch on" id="refreshToggle"></button></div>
+          </div>
+        </div>
+
+        <button class="avatar-btn" id="avatarBtn"><div class="avatar" id="topAvatar">–</div></button>
+      </div>
+    </div>
+
+    <!-- DECISION TAB -->
+    <div class="section" data-tab-section="decision">
+
+      <div class="copilot">
+        <div class="copilot-icon"><i class="ti ti-sparkles"></i></div>
+        <div>
+          <div class="copilot-label">Decision Assistant summary</div>
+          <div class="copilot-text" id="copilotText"></div>
+        </div>
+        <button class="copilot-cta" id="reviewPrioritiesBtn">Review priorities <i class="ti ti-arrow-right"></i></button>
+      </div>
+
+      <div class="kpi-row" id="kpiRow"></div>
+
+      <div class="center-row">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">AI maintenance priority matrix</div>
+              <div class="panel-sub">Failure likelihood vs. production impact — bubble size is MPI, color is priority tier</div>
+            </div>
+            <div class="legend-row">
+              <span><span class="legend-dot" style="background:#C8102E;"></span>Critical</span>
+              <span><span class="legend-dot" style="background:#F4841F;"></span>High</span>
+              <span><span class="legend-dot" style="background:#D97706;"></span>Medium</span>
+              <span><span class="legend-dot" style="background:#16A34A;"></span>Low</span>
+            </div>
+          </div>
+          <div class="chart-box" style="height:280px;">
+            <canvas id="matrixChart" role="img" aria-label="Scatter chart plotting failure likelihood against production impact for monitored assets, colored by priority tier. Click a bubble for details.">Chart data available in the decision queue table below.</canvas>
+          </div>
+        </div>
+
+        <div class="panel" style="display:flex; flex-direction:column;" id="recPanel"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Maintenance Priority Ranking</div>
+            <div class="panel-sub">All assets, ranked by Maintenance Priority Index (MPI) — ECS + ECrS + MCS + ERTS breakdown, per Section 8.2 of the Technical Appendix</div>
+          </div>
+          <button class="panel-link" id="viewAllBtn">View all assets →</button>
+        </div>
+        <div class="legend-row" style="margin-bottom:12px;">
+          <span><span class="legend-dot" style="background:var(--blue);"></span>ECS — Equipment Condition (0–40)</span>
+          <span><span class="legend-dot" style="background:var(--orange);"></span>ECrS — Equipment Criticality (0–25)</span>
+          <span><span class="legend-dot" style="background:var(--amber);"></span>MCS — Maintenance Context (0–20)</span>
+          <span><span class="legend-dot" style="background:#8B5CF6;"></span>ERTS — Estimated Repair Time (0–15)</span>
+        </div>
+        <div class="filter-row" id="filterRow" style="margin-bottom:10px;"></div>
+        <div class="mpi-table-wrap">
+          <table class="mpi-table">
+            <thead><tr><th>Rank</th><th>Equipment</th><th>ECS /40</th><th>ECrS /25</th><th>MCS /20</th><th>ERTS /15</th><th>MPI /100</th><th>Priority</th><th>Recommended Action</th><th>Action</th></tr></thead>
+            <tbody id="queueBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Recommendation timeline</div>
+            <div class="panel-sub">Upcoming AI-scheduled interventions</div>
+          </div>
+        </div>
+        <div class="timeline-wrap" id="timelineWrap"></div>
+      </div>
+
+      <div class="split-row">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Why this recommendation?</div>
+              <div class="panel-sub" id="explainSub">Contributing factors behind the top-priority MPI score</div>
+            </div>
+          </div>
+          <div id="factorList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Equipment health map</div>
+              <div class="panel-sub">Live status across monitored assets — click a tile for detail</div>
+            </div>
+          </div>
+          <div class="health-grid" id="healthGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="section hidden" data-tab-section="dashboard">
+      <div class="kpi-row" id="kpiRowDash"></div>
+      <div class="analytics-row" id="analyticsRowDash"></div>
+    </div>
+
+    <!-- DIGITAL TWIN TAB -->
+    <div class="section hidden" data-tab-section="twin">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Plant digital twin</div>
+            <div class="panel-sub">Obajana Line 1 process flow — click any stage for live condition, priority score, and recommendation</div>
+          </div>
+        </div>
+        <div class="twin-flow" id="twinFlow"></div>
+        <div class="legend-row" style="margin-top:6px;">
+          <span><span class="legend-dot" style="background:#16A34A;"></span>Healthy</span>
+          <span><span class="legend-dot" style="background:#F4841F;"></span>Warning</span>
+          <span><span class="legend-dot" style="background:#C8102E;"></span>Critical</span>
+        </div>
+      </div>
+
+      <div class="split-row">
+        <div class="panel">
+          <div class="panel-head"><div><div class="panel-title">Equipment health map</div><div class="panel-sub">Every monitored asset, not just the process backbone</div></div></div>
+          <div class="health-grid" id="healthGridTwin"></div>
+        </div>
+        <div class="panel" id="recPanelTwin"></div>
+      </div>
+    </div>
+
+    <!-- ASSETS TAB -->
+    <div class="section hidden" data-tab-section="assets">
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Plant sensor status</div><div class="panel-sub">Worst reading per sensor category, across all monitored assets</div></div></div>
+        <div class="sensorstat-row" id="sensorStatRow"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Equipment health map</div><div class="panel-sub">Click a tile for full detail</div></div></div>
+        <div class="health-grid" id="healthGrid2"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">MPI score breakdown</div><div class="panel-sub">ECS + ECrS + MCS + ERTS = Maintenance Priority Index, per Section 8 of the Technical Appendix</div></div></div>
+        <div class="legend-row" style="margin-bottom:12px;">
+          <span><span class="legend-dot" style="background:var(--blue);"></span>ECS — Equipment Condition (0–40)</span>
+          <span><span class="legend-dot" style="background:var(--orange);"></span>ECrS — Equipment Criticality (0–25)</span>
+          <span><span class="legend-dot" style="background:var(--amber);"></span>MCS — Maintenance Context (0–20)</span>
+          <span><span class="legend-dot" style="background:#8B5CF6;"></span>ERTS — Estimated Repair Time (0–15)</span>
+        </div>
+        <div class="mpi-table-wrap">
+          <table class="mpi-table">
+            <thead><tr><th>Equipment</th><th>ECS /40</th><th>ECrS /25</th><th>MCS /20</th><th>ERTS /15</th><th>MPI /100</th><th>Priority</th></tr></thead>
+            <tbody id="mpiBreakdownBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Sensor snapshot</div><div class="panel-sub">Live readings, all monitored assets</div></div></div>
+        <div class="sensor-row" id="sensorRow2"></div>
+      </div>
+    </div>
+
+    <!-- MAINTENANCE TAB -->
+    <div class="section hidden" data-tab-section="maintenance">
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Recommendation timeline</div><div class="panel-sub">Upcoming AI-scheduled interventions</div></div></div>
+        <div class="timeline-wrap" id="timelineWrap2"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Maintenance Priority Ranking</div><div class="panel-sub">All assets, ranked by Maintenance Priority Index (MPI) — ECS + ECrS + MCS + ERTS breakdown, per Section 8.2 of the Technical Appendix</div></div></div>
+        <div class="legend-row" style="margin-bottom:12px;">
+          <span><span class="legend-dot" style="background:var(--blue);"></span>ECS — Equipment Condition (0–40)</span>
+          <span><span class="legend-dot" style="background:var(--orange);"></span>ECrS — Equipment Criticality (0–25)</span>
+          <span><span class="legend-dot" style="background:var(--amber);"></span>MCS — Maintenance Context (0–20)</span>
+          <span><span class="legend-dot" style="background:#8B5CF6;"></span>ERTS — Estimated Repair Time (0–15)</span>
+        </div>
+        <div class="mpi-table-wrap">
+          <table class="mpi-table">
+            <thead><tr><th>Rank</th><th>Equipment</th><th>ECS /40</th><th>ECrS /25</th><th>MCS /20</th><th>ERTS /15</th><th>MPI /100</th><th>Priority</th><th>Recommended Action</th><th>Action</th></tr></thead>
+            <tbody id="queueBody2"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Decision history &amp; engineer approval log</div><div class="panel-sub">Every scheduled action, with the engineer who approved it</div></div></div>
+        <div class="log-row head"><span>Timestamp</span><span>Machine &amp; action</span><span>MPI at approval</span><span>Priority</span><span>Approved by</span></div>
+        <div id="decisionLogBody"></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULED TAB -->
+    <div class="section hidden" data-tab-section="scheduled">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Scheduled events</div>
+            <div class="panel-sub">Equipment that has been reviewed and confirmed for work — approve a recommendation from the Decision Center or Maintenance tab to add it here</div>
+          </div>
+        </div>
+        <div class="sched-stats" id="schedStats" style="margin-bottom:14px;"></div>
+        <div class="legend-row" style="margin-bottom:12px;">
+          <span><span class="legend-dot" style="background:var(--red);"></span>Critical</span>
+          <span><span class="legend-dot" style="background:var(--orange);"></span>High</span>
+          <span><span class="legend-dot" style="background:var(--amber);"></span>Moderate</span>
+          <span><span class="legend-dot" style="background:var(--green);"></span>Low</span>
+        </div>
+        <div id="scheduledList" class="sched-list"></div>
+      </div>
+    </div>
+
+    <!-- SCENARIO SIMULATOR TAB -->
+    <div class="section hidden" data-tab-section="simulator">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Scenario simulator</div>
+            <div class="panel-sub">Trigger a fault to see the digital twin, priority queue, recommendations, and KPIs update in real time</div>
+          </div>
+        </div>
+        <div class="scenario-grid" id="scenarioGrid"></div>
+      </div>
+
+      <div id="simStatusWrap">
+        <div class="sim-idle"><i class="ti ti-player-play" style="margin-right:2px;"></i>No scenario running — live plant data shown below.</div>
+      </div>
+
+      <div class="kpi-row" id="kpiRowSim"></div>
+
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Digital twin</div><div class="panel-sub">Updates live as a scenario is applied</div></div></div>
+        <div class="twin-flow" id="twinFlow2"></div>
+      </div>
+
+      <div class="panel" id="recPanelSim"></div>
+    </div>
+
+    <!-- REPORTS TAB -->
+    <div class="section hidden" data-tab-section="reports">
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Maintenance priority trend</div><div class="panel-sub">Priority score over time — top 3 assets</div></div></div>
+        <div class="chart-box"><canvas id="priorityTrend" role="img" aria-label="Line chart of priority scores over 8 weeks for top assets">Trend data reflects rising priority scores for critical assets.</canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">Downtime risk forecast</div><div class="panel-sub">Today, tomorrow, and next 5 days</div></div></div>
+        <div class="chart-box"><canvas id="riskForecast" role="img" aria-label="Area chart of downtime risk percentage for the next week">Risk rises from 22% today toward 52% by day six.</canvas></div>
+      </div>
+    </div>
+
+    <!-- AI COPILOT TAB -->
+    <div class="section hidden" data-tab-section="copilot">
+      <div class="copilot-big">
+        <div class="copilot-big-top">
+          <div class="copilot-icon"><i class="ti ti-sparkles"></i></div>
+          <div class="copilot-big-title">Decision Assistant</div>
+        </div>
+        <div class="copilot-big-text" id="copilotTextBig"></div>
+        <div class="prompt-chip-row" id="promptChipRow"></div>
+      </div>
+
+      <div class="split-row">
+        <div class="panel chat-panel">
+          <div class="panel-head"><div><div class="panel-title">Ask the Decision Assistant</div><div class="panel-sub">Answers are grounded in live plant data</div></div></div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-row">
+            <input id="chatInput" placeholder="Ask about a machine, priority, or savings…">
+            <button class="chat-send-btn" id="chatSendBtn"><i class="ti ti-send"></i></button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><div><div class="panel-title">Why this recommendation?</div><div class="panel-sub" id="explainSubCopilot">Contributing factors behind the top-priority MPI score</div></div></div>
+          <div id="factorListCopilot"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" id="drawerClose"><i class="ti ti-x"></i></button>
+  <div id="drawerContent"></div>
+</div>
+
+<div class="modal-wrap" id="modalWrap">
+  <div class="modal">
+    <h3 id="modalTitle">Confirm action</h3>
+    <p id="modalBody"></p>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-confirm" id="modalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ---------- CURRENT USER (set via login.html) ---------- */
+function readCurrentUser(){
+  try{
+    const u = JSON.parse(localStorage.getItem('imdss_user') || 'null');
+    if(u && u.name && u.role) return u;
+  }catch(e){}
+  return null;
+}
+let currentUser = readCurrentUser();
+if(!currentUser){
+  window.location.replace('login.html');
+  throw new Error('Not signed in — redirecting to login.html');
+}
+function applyCurrentUser(){
+  const initials = currentUser.initials || currentUser.name.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  document.getElementById('sidebarAvatar').textContent = initials;
+  document.getElementById('sidebarUName').textContent = currentUser.name;
+  document.getElementById('sidebarURole').textContent = currentUser.role;
+  const topAvatar = document.getElementById('topAvatar');
+  if(topAvatar) topAvatar.textContent = initials;
+}
+
+/* ---------- DATA ---------- */
+const assets = [
+  { id:'FR-8821', name:'Crusher #4', icon:'ti-crane', priority:96, cause:'Bearing wear', confidence:96, eta:'42 hrs', impactPct:95, health:54,
+    vibration:'7.8 mm/s', temp:'84°C', load:'92%',
+    recBody:'Bearing vibration signature matches early-stage failure pattern seen in 14 prior incidents. Replacing the drive-end bearing now avoids an estimated 4.2-hour unplanned stop.',
+    action:'Replace', scheduled:false,
+    factors:[{l:'Vibration anomaly',p:88},{l:'Bearing temperature',p:74},{l:'Historical failure match',p:66},{l:'Run-hours since service',p:52},{l:'Load variance',p:31}] },
+  { id:'FR-4410', name:'Kiln Fan', icon:'ti-wind', priority:91, cause:'Shaft misalignment', confidence:89, eta:'3.5 days', impactPct:82, health:61,
+    vibration:'6.1 mm/s', temp:'77°C', load:'85%',
+    recBody:'Shaft alignment has drifted 0.4mm beyond tolerance over 3 weeks, consistent with early coupling wear. A laser alignment check now prevents cascading bearing damage.',
+    action:'Inspect', scheduled:false,
+    factors:[{l:'Shaft misalignment',p:79},{l:'Vibration anomaly',p:61},{l:'Bearing temperature',p:48},{l:'Run-hours since service',p:40},{l:'Load variance',p:22}] },
+  { id:'FR-2290', name:'Cement Mill', icon:'ti-grain', priority:84, cause:'Lubrication', confidence:77, eta:'6 days', impactPct:70, health:73,
+    vibration:'4.4 mm/s', temp:'68°C', load:'73%',
+    recBody:'Lubricant viscosity readings trending below spec. Scheduled service during the routine window avoids gear wear acceleration.',
+    action:'Service', scheduled:false,
+    factors:[{l:'Lubrication level',p:70},{l:'Temperature drift',p:55},{l:'Run-hours since service',p:44},{l:'Vibration anomaly',p:28},{l:'Load variance',p:19}] },
+  { id:'FR-1157', name:'Conveyor B2', icon:'ti-arrows-transfer-up', priority:62, cause:'Motor heat', confidence:58, eta:'3 weeks', impactPct:42, health:78,
+    vibration:'2.8 mm/s', temp:'59°C', load:'64%',
+    recBody:'Motor casing temperature runs slightly above baseline under peak load. Continue monitoring; no immediate action required.',
+    action:'Monitor', scheduled:false,
+    factors:[{l:'Motor temperature',p:48},{l:'Load variance',p:36},{l:'Run-hours since service',p:30},{l:'Vibration anomaly',p:18},{l:'Historical failure match',p:12}] },
+  { id:'FR-3305', name:'Raw Mill Belt', icon:'ti-arrows-right-left', priority:55, cause:'Belt tension', confidence:51, eta:'4 weeks', impactPct:48, health:81,
+    vibration:'3.1 mm/s', temp:'55°C', load:'58%',
+    recBody:'Belt tension sensor shows gradual slack accumulation. Low urgency; include in next scheduled inspection.',
+    action:'Monitor', scheduled:false,
+    factors:[{l:'Belt tension',p:44},{l:'Run-hours since service',p:33},{l:'Load variance',p:25},{l:'Vibration anomaly',p:15},{l:'Historical failure match',p:10}] },
+  { id:'FR-7702', name:'Cooler Fan', icon:'ti-snowflake', priority:38, cause:'None flagged', confidence:24, eta:'Stable', impactPct:30, health:91,
+    vibration:'2.1 mm/s', temp:'52°C', load:'61%',
+    recBody:'All readings within normal operating range. No action needed.',
+    action:'Monitor', scheduled:false,
+    factors:[{l:'Vibration anomaly',p:20},{l:'Temperature drift',p:16},{l:'Run-hours since service',p:14},{l:'Load variance',p:9},{l:'Historical failure match',p:5}] },
+  { id:'FR-5590', name:'Packer Line 3', icon:'ti-box', priority:22, cause:'None flagged', confidence:15, eta:'Stable', impactPct:18, health:96,
+    vibration:'1.4 mm/s', temp:'46°C', load:'55%',
+    recBody:'Healthiest asset on the line. All readings well within normal range.',
+    action:'Monitor', scheduled:false,
+    factors:[{l:'Vibration anomaly',p:12},{l:'Temperature drift',p:9},{l:'Run-hours since service',p:8},{l:'Load variance',p:5},{l:'Historical failure match',p:3}] },
+];
+
+/* MPI breakdown data, sourced from dashboard.html — powers the Maintenance Priority Ranking table */
+const mpiAssets = [
+  { id:'FR-8821', name:'Crusher #4',    cause:'Bearing wear',        ecs:38, ecrs:24, mcs:19, erts:15, action:'Replace', scheduled:false },
+  { id:'FR-4410', name:'Kiln Fan',      cause:'Shaft misalignment',  ecs:34, ecrs:23, mcs:19, erts:15, action:'Inspect', scheduled:false },
+  { id:'FR-2290', name:'Cement Mill',   cause:'Lubrication',         ecs:30, ecrs:21, mcs:18, erts:15, action:'Service', scheduled:false },
+  { id:'FR-1157', name:'Conveyor B2',   cause:'Motor heat',          ecs:22, ecrs:14, mcs:14, erts:12, action:'Monitor', scheduled:false },
+  { id:'FR-3305', name:'Raw Mill Belt', cause:'Belt tension',        ecs:19, ecrs:13, mcs:13, erts:10, action:'Monitor', scheduled:false },
+  { id:'FR-7702', name:'Cooler Fan',    cause:'None flagged',        ecs:12, ecrs:11, mcs:9,  erts:6,  action:'Monitor', scheduled:false },
+  { id:'FR-5590', name:'Packer Line 3', cause:'None flagged',        ecs:7,  ecrs:7,  mcs:5,  erts:3,  action:'Monitor', scheduled:false },
+];
+/* Decision history & engineer approval log — every scheduled action, with the
+   engineer who reviewed and approved it, per Section 9.3 of the Technical
+   Appendix ("every recommendation surfaced on the dashboard is reviewed,
+   validated, and, where appropriate, adjusted by a qualified maintenance
+   engineer before being acted upon"). Team assignment follows Section 9.1
+   (mechanical, electrical, instrumentation, or reliability engineering). */
+const decisionLog = [
+  { ts:'14 Jul 2026 · 06:20', machine:'Raw Mill Bearing Assembly', action:'Immediate bearing inspection & corrective maintenance', mpi:87, level:'Critical', tier:'critical', approver:'Chinedu Okafor', role:'Mechanical Maintenance' },
+  { ts:'12 Jul 2026 · 14:05', machine:'Crusher #4', action:'Drive-end bearing replacement', mpi:94, level:'Critical', tier:'critical', approver:'Tunde Adebayo', role:'Reliability Engineering' },
+  { ts:'10 Jul 2026 · 09:40', machine:'Kiln Fan', action:'Laser shaft-alignment check', mpi:88, level:'Critical', tier:'critical', approver:'Ngozi Eze', role:'Mechanical Maintenance' },
+  { ts:'08 Jul 2026 · 17:22', machine:'Preheater Fan #2', action:'Bearing lubrication & vibration recheck', mpi:79, level:'Critical', tier:'critical', approver:'Chinedu Okafor', role:'Mechanical Maintenance' },
+  { ts:'06 Jul 2026 · 11:15', machine:'Cement Mill', action:'Gearbox lubrication service', mpi:68, level:'High', tier:'high', approver:'Ibrahim Musa', role:'Electrical & Instrumentation' },
+  { ts:'04 Jul 2026 · 08:50', machine:'Conveyor B2', action:'Motor casing temperature — extended monitoring', mpi:58, level:'High', tier:'high', approver:'Tunde Adebayo', role:'Reliability Engineering' },
+  { ts:'02 Jul 2026 · 15:33', machine:'Dust Collection Fan A', action:'Vibration sensor recalibration', mpi:44, level:'Moderate', tier:'medium', approver:'Chiamaka Nwosu', role:'Instrumentation' },
+  { ts:'30 Jun 2026 · 10:02', machine:'Raw Mill Belt', action:'Belt tension adjustment', mpi:52, level:'High', tier:'high', approver:'Ngozi Eze', role:'Mechanical Maintenance' },
+  { ts:'27 Jun 2026 · 13:47', machine:'Packer Line 3', action:'Routine inspection logged — no action required', mpi:19, level:'Low', tier:'low', approver:'Chiamaka Nwosu', role:'Instrumentation' },
+];
+function renderDecisionLog(){
+  const rows = decisionLog.map(d=>`
+    <div class="log-row">
+      <span>${d.ts}</span>
+      <span><strong>${d.machine}</strong> — ${d.action}</span>
+      <span>${d.mpi}</span>
+      <span><span class="prio-badge tint-${d.tier}">${d.level}</span></span>
+      <span>${d.approver}<br><span style="color:var(--ink-3); font-size:11px;">${d.role}</span></span>
+    </div>`).join('');
+  document.getElementById('decisionLogBody').innerHTML = rows;
+}
+function levelForTier(t){ return t==='critical'?'Critical': t==='high'?'High': t==='medium'?'Moderate':'Low'; }
+function renderScheduled(){
+  const wrap = document.getElementById('scheduledList');
+  const statsWrap = document.getElementById('schedStats');
+  if(!wrap) return;
+
+  /* Equipment can be scheduled from two places: the recommendation/drawer
+     confirm flow (assets[].scheduled) and the priority ranking table's
+     action button (mpiAssets[].scheduled). Merge both by id. */
+  const ids = new Set([
+    ...assets.filter(a=>a.scheduled).map(a=>a.id),
+    ...mpiAssets.filter(a=>a.scheduled).map(a=>a.id)
+  ]);
+
+  const all = [...ids].map(id=>{
+    const a = assets.find(x=>x.id===id);
+    const m = mpiAssets.find(x=>x.id===id);
+    const name = (a && a.name) || (m && m.name) || id;
+    const action = (a && a.action) || (m && m.action) || 'Maintenance';
+    const priority = a ? a.priority : (m ? (m.ecs + m.ecrs + m.mcs + m.erts) : 0);
+    const tier = tierOf(priority);
+    return { ts:'Just now', machine:name, action:`${action} — work order created`, mpi:priority, level:levelForTier(tier), tier, approver:currentUser.name, role:currentUser.role, icon:'ti-circle-check' };
+  }).sort((x,y)=>y.mpi-x.mpi);
+
+  if(statsWrap){
+    const criticalCount = all.filter(d=>d.tier==='critical').length;
+    statsWrap.innerHTML = `
+      <div class="sched-stat"><i class="ti ti-calendar-event" style="color:var(--ink-3);"></i>Total scheduled: <b>${all.length}</b></div>
+      <div class="sched-stat"><i class="ti ti-alert-triangle" style="color:var(--red-fg);"></i>Critical: <b>${criticalCount}</b></div>
+      <div class="sched-stat"><i class="ti ti-clock" style="color:var(--ink-3);"></i>Most recent: <b>${all[0] ? all[0].ts : '—'}</b></div>`;
+  }
+
+  if(all.length===0){
+    wrap.innerHTML = `<div class="sched-empty"><i class="ti ti-calendar-off"></i>No events scheduled yet — approve a recommendation to see it here.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = all.map(d=>`
+    <div class="sched-card">
+      <div class="sched-icon tint-${d.tier}"><i class="ti ${d.icon || 'ti-calendar-event'}"></i></div>
+      <div class="sched-body">
+        <div class="sched-title">${d.machine} — ${d.action}</div>
+        <div class="sched-sub">MPI ${d.mpi} · Approved by ${d.approver}${d.role ? ' · '+d.role : ''}</div>
+      </div>
+      <div class="sched-meta">
+        <span class="prio-badge tint-${d.tier}">${d.level}</span>
+        <span class="sched-ts">${d.ts}</span>
+      </div>
+    </div>`).join('');
+}
+function mpiClassify(mpi){
+  if(mpi>=76) return {level:'Critical', tier:'critical', action:'Immediate Maintenance Intervention'};
+  if(mpi>=51) return {level:'High', tier:'high', action:'Inspect Within 24 Hours'};
+  if(mpi>=26) return {level:'Moderate', tier:'medium', action:'Schedule Inspection'};
+  return {level:'Low', tier:'low', action:'Continue Monitoring'};
+}
+function mpiScoreCell(val, max, fillClass){
+  const pct = Math.round((val/max)*100);
+  return `<div class="scorecell">
+    <div class="n"><span>${val}</span><span>/${max}</span></div>
+    <div class="bar"><div class="bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+  </div>`;
+}
+/* Full plant ranking, sorted once so "Rank" reflects true plant-wide MPI position
+   even when a view (e.g. Decision Center's top-4) only shows a slice of it. */
+function rankedMpiAssets(){
+  return [...mpiAssets]
+    .sort((a,b)=>(b.ecs+b.ecrs+b.mcs+b.erts)-(a.ecs+a.ecrs+a.mcs+a.erts))
+    .map((a,i)=>({ ...a, rank:i+1 }));
+}
+function mpiRowHtml(a){
+  const mpi = a.ecs + a.ecrs + a.mcs + a.erts;
+  const c = mpiClassify(mpi);
+  const actionBtn = a.scheduled
+    ? `<button class="act-btn act-done"><i class="ti ti-check"></i> Scheduled</button>`
+    : `<button class="act-btn ${c.tier==='critical'||c.tier==='high'?'act-red':'act-outline'}" data-mpi-act="${a.id}">${a.action}</button>`;
+  return `<tr data-mpi-row="${a.id}">
+    <td data-label="Rank" style="font-weight:700; color:var(--ink-3);">${a.rank}</td>
+    <td data-label="Equipment"><button class="machine-cell" data-open="${a.id}"><div><div class="mpi-eq-name">${a.name}</div><div class="mpi-eq-cause">${a.cause}</div></div></button></td>
+    <td data-label="ECS /40">${mpiScoreCell(a.ecs, 40, 'fill-ecs')}</td>
+    <td data-label="ECrS /25">${mpiScoreCell(a.ecrs, 25, 'fill-ecrs')}</td>
+    <td data-label="MCS /20">${mpiScoreCell(a.mcs, 20, 'fill-mcs')}</td>
+    <td data-label="ERTS /15">${mpiScoreCell(a.erts, 15, 'fill-erts')}</td>
+    <td data-label="MPI /100" class="mpi-val-cell"><div class="mpi-val">${mpi}</div></td>
+    <td data-label="Priority"><span class="prio-badge tint-${c.tier}">${c.level}</span></td>
+    <td data-label="Recommended Action" style="font-size:12.5px; color:var(--ink-2);">${c.action}</td>
+    <td data-label="Action">${actionBtn}</td>
+  </tr>`;
+}
+/* Renders the same ranked data + UI into a target table body.
+   opts.search  -> filter by the global search box (Decision Center only)
+   opts.limit   -> cap to top N unless queueShowAll is toggled on (Decision Center only) */
+function renderMpiTable(targetId, opts){
+  opts = opts || {};
+  let list = rankedMpiAssets();
+  if(opts.search) list = list.filter(a => a.name.toLowerCase().includes(searchTerm) || a.id.toLowerCase().includes(searchTerm));
+  if(opts.limit && !queueShowAll) list = list.slice(0, opts.limit);
+  document.getElementById(targetId).innerHTML = list.map(mpiRowHtml).join('');
+  const scope = document.getElementById(targetId);
+  scope.querySelectorAll('[data-open]').forEach(b=> b.onclick = ()=> openDrawer(b.getAttribute('data-open')));
+  scope.querySelectorAll('[data-mpi-act]').forEach(btn=>{
+    btn.onclick = ()=>{
+      const a = mpiAssets.find(x=>x.id===btn.getAttribute('data-mpi-act'));
+      if(!a) return;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="chat-typing"><span></span><span></span><span></span></span>`;
+      setTimeout(()=>{
+        a.scheduled = true;
+        toast(`${a.action} work order created for ${a.name}`, 'ti-check', 'success');
+        renderMpiRanking();
+      }, 700);
+    };
+  });
+  if(targetId==='queueBody'){
+    document.getElementById('viewAllBtn').textContent = queueShowAll ? '← Show top 4' : 'View all assets →';
+  }
+}
+function renderMpiRanking(){
+  renderMpiTable('queueBody', { search:true, limit:4 });
+  renderMpiTable('queueBody2', {});
+  renderScheduled();
+}
+
+/* deep snapshot of live data, used to reset after a simulated scenario */
+const originalAssets = JSON.parse(JSON.stringify(assets));
+function restoreLiveData(){
+  assets.forEach((a,i)=> Object.assign(a, JSON.parse(JSON.stringify(originalAssets[i]))));
+}
+
+/* ---------- DIGITAL TWIN: process backbone ---------- */
+const twinStages = [
+  { stage:'Raw Crusher',    assetId:'FR-8821', icon:'ti-crane' },
+  { stage:'Raw Mill',       assetId:'FR-3305', icon:'ti-arrows-right-left' },
+  { stage:'Rotary Kiln',    assetId:'FR-4410', icon:'ti-wind' },
+  { stage:'Clinker Cooler', assetId:'FR-7702', icon:'ti-snowflake' },
+  { stage:'Cement Mill',    assetId:'FR-2290', icon:'ti-grain' },
+  { stage:'Packing Plant',  assetId:'FR-5590', icon:'ti-box' },
+];
+
+/* ---------- SCENARIO SIMULATOR: demo fault injections ---------- */
+let activeScenario = null;
+const scenarios = [
+  { id:'bearing', label:'Bearing Failure', icon:'ti-settings', targetId:'FR-8821',
+    sub:'Crusher #4 — drive-end bearing degrading fast',
+    overrides:{ priority:99, health:34, confidence:98, cause:'Bearing failure (critical)', impactPct:98, eta:'4 hrs', action:'Replace',
+      recBody:'Bearing vibration has spiked sharply in the last hour — signature matches imminent failure. Immediate replacement avoids an unplanned stoppage.',
+      factors:[{l:'Vibration anomaly',p:97},{l:'Bearing temperature',p:91},{l:'Historical failure match',p:84},{l:'Run-hours since service',p:58},{l:'Load variance',p:35}] } },
+  { id:'cooling', label:'Cooling Fan Failure', icon:'ti-wind', targetId:'FR-7702',
+    sub:'Clinker Cooler fan — motor overheating',
+    overrides:{ priority:93, health:41, confidence:90, cause:'Fan motor overheating', impactPct:88, eta:'18 hrs', action:'Replace',
+      recBody:'Cooler fan motor casing temperature has climbed steadily and is now 22°C above baseline. Left unaddressed, clinker cooling efficiency drops and downstream cement mill throughput falls.',
+      factors:[{l:'Motor temperature',p:89},{l:'Vibration anomaly',p:63},{l:'Run-hours since service',p:47},{l:'Load variance',p:38},{l:'Historical failure match',p:22}] } },
+  { id:'overload', label:'Motor Overload', icon:'ti-bolt', targetId:'FR-1157',
+    sub:'Conveyor B2 drive motor — sustained overcurrent',
+    overrides:{ priority:90, health:45, confidence:87, cause:'Motor overload', impactPct:80, eta:'26 hrs', action:'Inspect',
+      recBody:'Drive motor current draw is sustained 30% above rated load, consistent with mechanical binding downstream. Inspect before thermal protection trips the line.',
+      factors:[{l:'Motor current draw',p:86},{l:'Motor temperature',p:70},{l:'Load variance',p:59},{l:'Run-hours since service',p:31},{l:'Vibration anomaly',p:24}] } },
+  { id:'jam', label:'Conveyor Jam', icon:'ti-ban', targetId:'FR-3305',
+    sub:'Raw Mill Belt — material buildup detected',
+    overrides:{ priority:88, health:39, confidence:85, cause:'Material jam detected', impactPct:76, eta:'2 hrs', action:'Clear',
+      recBody:'Belt torque has spiked against a fixed load pattern consistent with a material jam near the transfer chute. Clear the obstruction before belt tracking is affected.',
+      factors:[{l:'Belt torque spike',p:83},{l:'Belt tension',p:66},{l:'Load variance',p:52},{l:'Run-hours since service',p:29},{l:'Vibration anomaly',p:20}] } },
+  { id:'lubrication', label:'Lubrication Failure', icon:'ti-droplet-off', targetId:'FR-2290',
+    sub:'Cement Mill gearbox — lubricant loss',
+    overrides:{ priority:95, health:33, confidence:93, cause:'Severe lubrication failure', impactPct:90, eta:'6 hrs', action:'Replace',
+      recBody:'Gearbox lubricant level has dropped sharply and viscosity is out of spec. Continued operation risks accelerated gear wear and a full gearbox failure.',
+      factors:[{l:'Lubrication level',p:92},{l:'Gearbox temperature',p:81},{l:'Vibration anomaly',p:54},{l:'Run-hours since service',p:40},{l:'Load variance',p:26}] } },
+];
+
+function applyScenario(id){
+  restoreLiveData();
+  const sc = scenarios.find(s=>s.id===id);
+  const asset = assets.find(a=>a.id===sc.targetId);
+  Object.assign(asset, sc.overrides);
+  activeScenario = id;
+  renderAll();
+  toast(`Scenario applied: ${sc.label}`, 'ti-alert-triangle', 'warning');
+  const row = document.querySelector(`tr[data-asset="${asset.id}"]`);
+  if(row) row.classList.add('row-flash');
+}
+function resetScenario(){
+  restoreLiveData();
+  activeScenario = null;
+  renderAll();
+  toast('Reset to live plant data', 'ti-refresh', 'info');
+}
+
+function tierOf(p){ return p>=90?'critical': p>=75?'high': p>=50?'medium':'low'; }
+function tierLabel(t){ return t==='critical'?'Critical': t==='high'?'High': t==='medium'?'Medium':'Low'; }
+function tierColor(t){ return t==='critical'?'#C8102E': t==='high'?'#F4841F': t==='medium'?'#D97706':'#16A34A'; }
+function healthTier(h){ return h>=85?'ok': h>=65?'watch':'crit'; }
+function healthClass(t){ return t==='ok'?'tint-low': t==='watch'?'tint-high':'tint-critical'; }
+function healthLabel(t){ return t==='ok'?'Healthy': t==='watch'?'Watch':'Critical'; }
+
+let queueShowAll = false;
+let searchTerm = '';
+let pendingAction = null;
+
+/* ---------- TOAST ---------- */
+function toast(msg, icon, type){
+  icon = icon || 'ti-check';
+  type = type || 'success';
+  const stack = document.getElementById('toastStack');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<i class="ti ${icon}"></i><span>${msg}</span>`;
+  stack.appendChild(el);
+  setTimeout(()=>{ el.classList.add('leaving'); setTimeout(()=>el.remove(),200); }, 3200);
+}
+
+/* ---------- RENDER: KPI ---------- */
+function renderKpis(){
+  const openCount = assets.filter(a=>tierOf(a.priority)==='critical' && !a.scheduled).length;
+  const hours = assets.filter(a=>!a.scheduled).reduce((s,a)=> s + (tierOf(a.priority)!=='low' ? a.impactPct/10 : 0), 0).toFixed(1);
+  const html = `
+    <div class="kpi-card">
+      <div class="kpi-top"><div class="kpi-title">Which assets need me today?</div>
+        <div class="kpi-icon tint-critical"><i class="ti ti-alert-triangle"></i></div></div>
+      <div class="kpi-value" id="kpiCritical">${openCount}</div>
+      <div class="kpi-trend up"><i class="ti ti-arrow-up-right"></i>+1 since yesterday</div>
+      <div class="kpi-note">Assets flagged critical priority, action needed this shift.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top"><div class="kpi-title">How much downtime is at risk?</div>
+        <div class="kpi-icon tint-high"><i class="ti ti-clock-hour-4"></i></div></div>
+      <div class="kpi-value" id="kpiHours">${hours} hrs</div>
+      <div class="kpi-trend down"><i class="ti ti-arrow-down-right"></i>-2.1 hrs vs last week</div>
+      <div class="kpi-note">Modelled downtime across all open predictions.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top"><div class="kpi-title">Is fleet health improving?</div>
+        <div class="kpi-icon tint-low"><i class="ti ti-heart-rate-monitor"></i></div></div>
+      <div class="kpi-value">87.4%</div>
+      <div class="kpi-trend up"><i class="ti ti-arrow-up-right"></i>+2.1 pts vs last month</div>
+      <div class="kpi-note">Weighted health index across all monitored assets.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-top"><div class="kpi-title">How much has AI saved us?</div>
+        <div class="kpi-icon tint-info"><i class="ti ti-coin"></i></div></div>
+      <div class="kpi-value">₦42.8M</div>
+      <div class="kpi-trend up"><i class="ti ti-arrow-up-right"></i>Avoided this quarter</div>
+      <div class="kpi-note">Estimated production loss prevented by early action.</div>
+    </div>`;
+  document.getElementById('kpiRow').innerHTML = html;
+  document.getElementById('kpiRowDash').innerHTML = html;
+  const simEl = document.getElementById('kpiRowSim');
+  if(simEl) simEl.innerHTML = html;
+}
+
+/* ---------- RENDER: COPILOT ---------- */
+function renderCopilot(){
+  const top = assets.filter(a=>!a.scheduled).sort((a,b)=>b.priority-a.priority)[0];
+  const el = document.getElementById('copilotText');
+  if(!top){ el.innerHTML = '<b>All flagged assets are scheduled.</b> No production-critical items remain unaddressed this shift.'; return; }
+  const others = assets.filter(a=>!a.scheduled && a.id!==top.id && tierOf(a.priority)!=='low').length;
+  el.innerHTML = `<b>${others+1} production-critical assets</b> require attention within the next 6 hours.
+    Prioritize <b>${top.name}</b> to avoid an estimated <b>${(top.impactPct/10).toFixed(1)} hours</b> of downtime —
+    ${top.cause.toLowerCase()} has raised its failure confidence to <b>${top.confidence}%</b>. Combined production risk is
+    <b>₦18.6M</b> if unaddressed this shift.`;
+}
+
+/* ---------- RENDER: AI COPILOT PAGE ---------- */
+function renderCopilotBig(){
+  const el = document.getElementById('copilotTextBig');
+  if(!el) return;
+  el.innerHTML = document.getElementById('copilotText').innerHTML;
+  const chipRow = document.getElementById('promptChipRow');
+  const top = assets.filter(a=>!a.scheduled).sort((a,b)=>b.priority-a.priority)[0];
+  const prompts = [
+    `What should I prioritize today?`,
+    top ? `Explain the ${top.name} recommendation` : `Any critical assets?`,
+    `How much has AI saved us?`,
+    `What's our fleet health?`
+  ];
+  chipRow.innerHTML = prompts.map(p=>`<button class="prompt-chip" data-prompt="${p}">${p}</button>`).join('');
+  document.querySelectorAll('[data-prompt]').forEach(b=> b.onclick = ()=>{
+    document.getElementById('chatInput').value = b.getAttribute('data-prompt');
+    sendChatMessage();
+  });
+}
+
+let chatStarted = false;
+function initChat(){
+  if(chatStarted) return;
+  chatStarted = true;
+  appendChatBubble('bot', `Hi, I'm the IMDSS Decision Assistant. Ask me about any asset, today's priorities, or estimated savings — I'll answer from live plant data.`);
+}
+function appendChatBubble(role, html){
+  const wrap = document.getElementById('chatMessages');
+  const row = document.createElement('div');
+  row.className = `chat-row ${role}`;
+  row.innerHTML = `<div class="chat-avatar ${role==='bot'?'bot':'user'}">${role==='bot'?'<i class="ti ti-sparkles"></i>':'TA'}</div><div class="chat-bubble">${html}</div>`;
+  wrap.appendChild(row);
+  wrap.scrollTop = wrap.scrollHeight;
+  return row;
+}
+function generateCopilotReply(query){
+  const q = query.toLowerCase();
+  const match = assets.find(a=> q.includes(a.name.toLowerCase()) || q.includes(a.id.toLowerCase()));
+  if(match){
+    const tier = tierOf(match.priority);
+    return `<b>${match.name}</b> (${match.id}) is at priority <b>${match.priority} · ${tierLabel(tier)}</b>. Likely cause: <b>${match.cause}</b> at ${match.confidence}% confidence. Recommended action: <b>${match.action}</b>, time remaining ${match.eta}. ${match.recBody}`;
+  }
+  if(q.includes('save') || q.includes('cost') || q.includes('roi') || q.includes('avoid')){
+    return `Estimated production loss avoided this quarter is <b>₦42.8M</b>, driven mainly by early intervention on high-priority assets before failure.`;
+  }
+  if(q.includes('health') || q.includes('fleet')){
+    return `Fleet-wide weighted health index is <b>87.4%</b>, up <b>2.1 points</b> versus last month.`;
+  }
+  if(q.includes('priorit') || q.includes('today') || q.includes('first') || q.includes('attend')){
+    const top = assets.filter(a=>!a.scheduled).sort((a,b)=>b.priority-a.priority)[0];
+    if(!top) return `All flagged assets are currently scheduled — nothing production-critical is open right now.`;
+    return `Top priority is <b>${top.name}</b> at a score of <b>${top.priority}</b> — ${top.cause.toLowerCase()}, ${top.confidence}% confidence, ${top.eta} until estimated impact. Recommended action: <b>${top.action}</b>.`;
+  }
+  return `I can answer questions about specific assets (e.g. "Crusher #4"), today's priorities, fleet health, or estimated savings — try one of the suggested prompts above.`;
+}
+function sendChatMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  appendChatBubble('user', text);
+  input.value = '';
+  const wrap = document.getElementById('chatMessages');
+  const typingRow = document.createElement('div');
+  typingRow.className = 'chat-row bot';
+  typingRow.innerHTML = `<div class="chat-avatar bot"><i class="ti ti-sparkles"></i></div><div class="chat-bubble"><span class="chat-typing"><span></span><span></span><span></span></span></div>`;
+  wrap.appendChild(typingRow);
+  wrap.scrollTop = wrap.scrollHeight;
+  setTimeout(()=>{
+    typingRow.remove();
+    appendChatBubble('bot', generateCopilotReply(text));
+  }, 650);
+}
+
+/* ---------- RENDER: RECOMMENDATION PANEL ---------- */
+function renderRecPanel(){
+  const top = assets.filter(a=>!a.scheduled).sort((a,b)=>b.priority-a.priority)[0];
+  const containers = ['recPanel','recPanelTwin','recPanelSim'].map(id=>document.getElementById(id)).filter(Boolean);
+  let html;
+  if(!top){
+    html = `<div class="panel-head"><div><div class="panel-title">AI recommendation</div><div class="panel-sub">All caught up</div></div></div>
+      <div class="rec-scheduled"><i class="ti ti-check"></i>No open recommendations right now</div>`;
+  } else {
+    const tier = tierOf(top.priority);
+    html = `
+      <div class="panel-head"><div><div class="panel-title">AI recommendation</div><div class="panel-sub">Top priority right now</div></div></div>
+      <div class="rec-top"><span class="rec-badge tint-${tier}">${tierLabel(tier)}</span><span class="rec-machine">${top.name}</span></div>
+      <div class="rec-body">${top.recBody}</div>
+      <div class="rec-stats">
+        <div class="rec-stat"><div class="l">Confidence</div><div class="v">${top.confidence}%</div></div>
+        <div class="rec-stat"><div class="l">Time remaining</div><div class="v">${top.eta}</div></div>
+      </div>
+      <button class="rec-btn" data-rec-schedule="${top.id}">Schedule ${top.action.toLowerCase()}</button>
+      <button class="rec-btn-ghost" data-rec-evidence="${top.id}">View sensor evidence</button>`;
+  }
+  containers.forEach(el=> el.innerHTML = html);
+  document.querySelectorAll('[data-rec-schedule]').forEach(b=> b.onclick = ()=> openConfirm(b.getAttribute('data-rec-schedule'), top.action));
+  document.querySelectorAll('[data-rec-evidence]').forEach(b=> b.onclick = ()=> openDrawer(b.getAttribute('data-rec-evidence')));
+}
+
+/* ---------- RENDER: QUEUE TABLE ----------
+   The Decision Center's "Maintenance Priority Ranking" table now shares its
+   data and markup with the Maintenance tab's ranking table — see
+   renderMpiRanking() / renderMpiTable() above. */
+
+/* ---------- RENDER: TIMELINE ---------- */
+function renderTimeline(){
+  const top4 = [...assets].sort((a,b)=>b.priority-a.priority).slice(0,4);
+  const weeks = ['This week','Next week','In 2 weeks','In 3 weeks'];
+  const tags = ['W26','W27','W28','W29'];
+  const html = top4.map((a,i)=>{
+    const tier = tierOf(a.priority);
+    return `<button class="tl-item" data-open="${a.id}">
+      <div class="tl-dot tint-${tier}">${tags[i]}</div>
+      <div class="tl-week">${weeks[i]}</div>
+      <div class="tl-title">${a.name} — ${a.action.toLowerCase()}</div>
+      <div class="tl-note">${a.scheduled ? 'Scheduled ✓' : a.recBody.slice(0,46)+'…'}</div>
+    </button>`;
+  }).join('');
+  document.getElementById('timelineWrap').innerHTML = html;
+  document.getElementById('timelineWrap2').innerHTML = html.replaceAll('timelineWrap','timelineWrap2');
+  document.querySelectorAll('#timelineWrap [data-open], #timelineWrap2 [data-open]').forEach(b=> b.onclick = ()=> openDrawer(b.getAttribute('data-open')));
+}
+
+/* ---------- RENDER: FACTORS ---------- */
+function renderFactors(){
+  const top = assets.filter(a=>!a.scheduled).sort((a,b)=>b.priority-a.priority)[0] || assets[0];
+  const factorHtml = top.factors.map(f=>`
+    <div class="factor-row"><span class="factor-label">${f.l}</span>
+      <span class="factor-track"><span class="factor-fill" data-width="${f.p}"></span></span>
+      <span class="factor-pct">${f.p}%</span></div>`).join('');
+  document.getElementById('explainSub').textContent = `Why ${top.name} was flagged`;
+  document.getElementById('factorList').innerHTML = factorHtml;
+  const explainSubCopilot = document.getElementById('explainSubCopilot');
+  const factorListCopilot = document.getElementById('factorListCopilot');
+  if(explainSubCopilot) explainSubCopilot.textContent = `Why ${top.name} was flagged`;
+  if(factorListCopilot) factorListCopilot.innerHTML = factorHtml;
+  animateFillBars();
+}
+
+/* ---------- RENDER: HEALTH MAP ---------- */
+function renderHealth(){
+  const html = assets.map(a=>{
+    const ht = healthTier(a.health);
+    return `<button class="health-tile" data-open="${a.id}">
+      <div class="hname">${a.name}</div><div class="hsite">${a.id}</div>
+      <div class="hscore" style="color:var(${ht==='ok'?'--green-fg':ht==='watch'?'--orange-fg':'--red-fg'});">${a.health}</div>
+      <div class="hstatus" style="color:var(${ht==='ok'?'--green-fg':ht==='watch'?'--orange-fg':'--red-fg'});">${healthLabel(ht)}</div>
+    </button>`;
+  }).join('');
+  document.getElementById('healthGrid').innerHTML = html;
+  document.getElementById('healthGrid2').innerHTML = html.replaceAll('healthGrid','healthGrid2');
+  const healthGridTwin = document.getElementById('healthGridTwin');
+  if(healthGridTwin) healthGridTwin.innerHTML = html.replaceAll('healthGrid','healthGridTwin');
+  document.querySelectorAll('#healthGrid [data-open], #healthGrid2 [data-open], #healthGridTwin [data-open]').forEach(b=> b.onclick = ()=> openDrawer(b.getAttribute('data-open')));
+}
+
+/* ---------- RENDER: DIGITAL TWIN FLOW ---------- */
+function renderTwin(){
+  const nodes = twinStages.map((s,i)=>{
+    const a = assets.find(x=>x.id===s.assetId);
+    const ht = healthTier(a.health);
+    const stCls = ht==='ok' ? 'st-ok' : ht==='watch' ? 'st-watch' : 'st-crit';
+    const connector = i < twinStages.length-1 ? '<div class="twin-connector"></div>' : '';
+    return `<button class="twin-node" data-open="${a.id}">
+        <div class="twin-node-icon"><i class="ti ${s.icon}"></i><span class="twin-status-dot ${stCls}"></span></div>
+        <div class="twin-node-name">${s.stage}</div>
+        <div class="twin-node-score">${a.priority} · ${a.name}</div>
+      </button>${connector}`;
+  }).join('');
+  ['twinFlow','twinFlow2'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = nodes;
+  });
+  document.querySelectorAll('#twinFlow [data-open], #twinFlow2 [data-open]').forEach(b=> b.onclick = ()=> openDrawer(b.getAttribute('data-open')));
+}
+
+/* ---------- RENDER: SCENARIO SIMULATOR ---------- */
+function renderScenarios(){
+  const grid = document.getElementById('scenarioGrid');
+  if(!grid) return;
+  grid.innerHTML = scenarios.map(s=>`
+    <button class="scenario-chip ${activeScenario===s.id?'active':''}" data-scenario="${s.id}">
+      <div class="scenario-chip-icon"><i class="ti ${s.icon}"></i></div>
+      <div><div class="scenario-chip-title">${s.label}</div><div class="scenario-chip-sub">${s.sub}</div></div>
+    </button>`).join('');
+  document.querySelectorAll('[data-scenario]').forEach(b=> b.onclick = ()=> applyScenario(b.getAttribute('data-scenario')));
+
+  const statusWrap = document.getElementById('simStatusWrap');
+  if(activeScenario){
+    const sc = scenarios.find(s=>s.id===activeScenario);
+    statusWrap.innerHTML = `<div class="sim-banner"><i class="ti ti-alert-triangle"></i><span>Simulating: <b>${sc.label}</b> on ${assets.find(a=>a.id===sc.targetId).name}. Digital twin, priority queue, recommendations and KPIs reflect this scenario.</span><button class="sim-reset-btn" id="simResetBtn">Reset to live data</button></div>`;
+    document.getElementById('simResetBtn').onclick = resetScenario;
+  } else {
+    statusWrap.innerHTML = `<div class="sim-idle"><i class="ti ti-player-play" style="margin-right:2px;"></i>No scenario running — live plant data shown below.</div>`;
+  }
+}
+
+/* ---------- RENDER: SENSOR SNAPSHOT ---------- */
+function renderSensors(){
+  const html = assets.map(a=>`
+    <button class="sensor-card" data-open="${a.id}">
+      <div class="sensor-name"><i class="ti ${a.icon}"></i>${a.name}</div>
+      <div class="sensor-metric">Vibration<b>${a.vibration}</b></div>
+      <div class="sensor-metric">Temp<b>${a.temp}</b></div>
+      <div class="sensor-metric">Load<b>${a.load}</b></div>
+    </button>`).join('');
+  document.getElementById('sensorRow2').innerHTML = html;
+  document.querySelectorAll('#sensorRow2 [data-open]').forEach(b=> b.onclick = ()=> openDrawer(b.getAttribute('data-open')));
+}
+
+/* ---------- RENDER: ALERTS DROPDOWN ---------- */
+function renderAlerts(){
+  const critical = assets.filter(a=> tierOf(a.priority)==='critical' && !a.scheduled);
+  document.getElementById('bellDot').style.display = critical.length ? 'block' : 'none';
+  document.getElementById('alertList').innerHTML = critical.length ? critical.map(a=>`
+    <div class="dropdown-item" data-alert="${a.id}">
+      <i class="ti ti-alert-triangle" style="color:var(--red-fg); font-size:16px; margin-top:1px;"></i>
+      <div><div class="t">${a.name}</div><div class="s">${a.cause} · ${a.confidence}% confidence</div></div>
+      <button class="dropdown-x" data-dismiss="${a.id}"><i class="ti ti-x"></i></button>
+    </div>`).join('') : `<div class="dropdown-item"><div class="s">No active critical alerts.</div></div>`;
+  document.querySelectorAll('[data-dismiss]').forEach(b=> b.onclick = (e)=>{
+    e.stopPropagation();
+    const a = assets.find(x=>x.id===b.getAttribute('data-dismiss'));
+    a.scheduled = true;
+    toast(`${a.name} acknowledged`, 'ti-check');
+    renderAll();
+  });
+  document.querySelectorAll('[data-alert]').forEach(b=> b.onclick = ()=>{ closeAllDropdowns(); openDrawer(b.getAttribute('data-alert')); });
+}
+
+/* ---------- RENDER: CHARTS ---------- */
+let matrixChart, priorityChart, riskChart;
+function priorityColorHex(p){ return tierColor(tierOf(p)); }
+
+function renderMatrix(){
+  if(typeof Chart === 'undefined'){ console.error('Chart.js not loaded — skipping priority matrix'); return; }
+  const data = assets.map(a=>({ x:a.confidence, y:a.impactPct, r: 7 + a.priority/9, id:a.id, label:a.name, tier:tierOf(a.priority) }));
+  const ctx = document.getElementById('matrixChart');
+  if(matrixChart) matrixChart.destroy();
+  matrixChart = new Chart(ctx, {
+    type: 'bubble',
+    data: { datasets: [{ data, backgroundColor: data.map(d=>priorityColorHex(assets.find(a=>a.id===d.id).priority)+'CC'), borderColor: data.map(d=>priorityColorHex(assets.find(a=>a.id===d.id).priority)), borderWidth: 1.5 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, layout:{ padding: 20 },
+      animation: { duration: 1200, easing: 'easeOutQuart' },
+      hoverRadius: 4, hoverBorderWidth: 3,
+      onClick: (evt, els) => { if(els.length){ openDrawer(data[els[0].index].id); } },
+      onHover: (evt, els) => { evt.native.target.style.cursor = els.length ? 'pointer' : 'default'; },
+      plugins: { legend:{ display:false }, tooltip: { backgroundColor:'rgba(24,22,20,0.95)', padding:10, cornerRadius:8, displayColors:false, callbacks: { label: (c)=> `${data[c.dataIndex].label}: ${c.raw.x}% confidence, impact ${c.raw.y}` } } },
+      scales: {
+        x: { min:0, max:100, title:{ display:true, text:'Failure confidence (%)', color:'#928E86', font:{size:11} }, grid:{ color:'#EAE7E1' }, ticks:{ color:'#928E86', font:{size:10} } },
+        y: { min:0, max:100, title:{ display:true, text:'Production impact', color:'#928E86', font:{size:11} }, grid:{ color:'#EAE7E1' }, ticks:{ color:'#928E86', font:{size:10} } }
+      }
+    }
+  });
+}
+const trendChartInstances = {};
+function makePriorityChart(canvasId){
+  const el = document.getElementById(canvasId);
+  if(!el) return;
+  if(trendChartInstances[canvasId]) trendChartInstances[canvasId].destroy();
+  trendChartInstances[canvasId] = new Chart(el, { type:'line', data:{ labels:['W19','W20','W21','W22','W23','W24','W25','W26'],
+    datasets:[
+      { label:'Crusher #4', data:[58,63,68,74,80,86,91,96], borderColor:'#C8102E', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:0 },
+      { label:'Kiln Fan', data:[50,55,60,66,72,78,85,91], borderColor:'#F4841F', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:0 },
+      { label:'Cement Mill', data:[40,44,50,56,63,70,77,84], borderColor:'#2563EB', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:0 }
+    ]}, options:{ responsive:true, maintainAspectRatio:false, animation:{ duration:1200, easing:'easeOutQuart' }, plugins:{legend:{display:false}},
+      scales:{ y:{min:0,max:100, grid:{color:'#EAE7E1'}, ticks:{color:'#928E86', font:{size:10}}}, x:{grid:{display:false}, ticks:{color:'#928E86', font:{size:10}}} } } });
+}
+function makeRiskChart(canvasId){
+  const el = document.getElementById(canvasId);
+  if(!el) return;
+  if(trendChartInstances[canvasId]) trendChartInstances[canvasId].destroy();
+  trendChartInstances[canvasId] = new Chart(el, { type:'line', data:{ labels:['Today','Tomorrow','+2d','+3d','+4d','+5d','+6d'],
+    datasets:[{ data:[22,35,41,38,44,52,47], borderColor:'#C8102E', backgroundColor:'rgba(200,16,46,0.12)', fill:true, borderWidth:2, tension:.35, pointRadius:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{ duration:1200, easing:'easeOutQuart' }, plugins:{legend:{display:false}},
+      scales:{ y:{min:0,max:60, grid:{color:'#EAE7E1'}, ticks:{color:'#928E86', font:{size:10}, callback:v=>v+'%'}}, x:{grid:{display:false}, ticks:{color:'#928E86', font:{size:10}}} } } });
+}
+function renderTrendCharts(){
+  if(typeof Chart === 'undefined'){ console.error('Chart.js not loaded — skipping trend charts'); return; }
+  makePriorityChart('priorityTrend');
+  makeRiskChart('riskForecast');
+  makePriorityChart('priorityTrendDash');
+  makeRiskChart('riskForecastDash');
+}
+document.getElementById('analyticsRowDash').innerHTML = `
+  <div class="panel"><div class="panel-head"><div><div class="panel-title">Maintenance priority trend</div><div class="panel-sub">Priority score over time</div></div></div>
+    <div class="chart-box"><canvas id="priorityTrendDash" role="img" aria-label="Line chart of priority scores over time">Trend data.</canvas></div></div>
+  <div class="panel"><div class="panel-head"><div><div class="panel-title">Downtime risk forecast</div><div class="panel-sub">Next 7 days</div></div></div>
+    <div class="chart-box"><canvas id="riskForecastDash" role="img" aria-label="Area chart of downtime risk">Risk trend.</canvas></div></div>`;
+
+/* ---------- DRAWER ---------- */
+function openDrawer(id){
+  const a = assets.find(x=>x.id===id);
+  const tier = tierOf(a.priority);
+  const ht = healthTier(a.health);
+  document.getElementById('drawerContent').innerHTML = `
+    <span class="prio-badge tint-${tier}" style="margin-bottom:10px; display:inline-flex;">${a.priority} · ${tierLabel(tier)}</span>
+    <h2>${a.name}</h2>
+    <div class="dsub">${a.id} &middot; Obajana plant, Line 1</div>
+
+    <div class="drawer-section">
+      <h4>AI assessment</h4>
+      <p style="font-size:12.5px; color:var(--ink-2); line-height:1.6;">${a.recBody}</p>
+    </div>
+
+    <div class="drawer-section">
+      <h4>Key figures</h4>
+      <div class="rec-stats">
+        <div class="rec-stat"><div class="l">Confidence</div><div class="v">${a.confidence}%</div></div>
+        <div class="rec-stat"><div class="l">Time remaining</div><div class="v">${a.eta}</div></div>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <h4>Live sensor readings</h4>
+      <div class="sensor-metric">Vibration<b>${a.vibration}</b></div>
+      <div class="sensor-metric">Temperature<b>${a.temp}</b></div>
+      <div class="sensor-metric">Load<b>${a.load}</b></div>
+      <div class="sensor-metric">Health score<b style="color:var(${ht==='ok'?'--green-fg':ht==='watch'?'--orange-fg':'--red-fg'})">${a.health} · ${healthLabel(ht)}</b></div>
+    </div>
+
+    <div class="drawer-section">
+      <h4>Why this recommendation?</h4>
+      ${a.factors.map(f=>`<div class="factor-row"><span class="factor-label">${f.l}</span><span class="factor-track"><span class="factor-fill" data-width="${f.p}"></span></span><span class="factor-pct">${f.p}%</span></div>`).join('')}
+    </div>
+
+    ${a.scheduled
+      ? `<div class="rec-scheduled"><i class="ti ti-check"></i> Work order scheduled</div>`
+      : `<button class="rec-btn" id="drawerScheduleBtn">Schedule ${a.action.toLowerCase()}</button>`}
+  `;
+  if(!a.scheduled){
+    document.getElementById('drawerScheduleBtn').onclick = ()=> openConfirm(a.id, a.action);
+  }
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('scrim').classList.add('open');
+  animateFillBars();
+}
+
+/* Animate any bar fills (factor bars, impact bars) from 0 to their target width */
+function animateFillBars(){
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      document.querySelectorAll('.factor-fill[data-width], .impact-bar-fill[data-width]').forEach(el=>{
+        el.style.width = el.getAttribute('data-width') + '%';
+      });
+    });
+  });
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('scrim').classList.remove('open');
+}
+
+/* ---------- CONFIRM MODAL ---------- */
+function openConfirm(id, action){
+  const a = assets.find(x=>x.id===id);
+  pendingAction = id;
+  document.getElementById('modalTitle').textContent = `${action} — ${a.name}`;
+  document.getElementById('modalBody').textContent = `This creates a work order for ${a.name} (${a.id}) with priority ${a.priority}. The asset will be marked as scheduled and removed from open recommendations.`;
+  document.getElementById('modalWrap').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('modalWrap').classList.remove('open'); pendingAction = null; }
+
+document.getElementById('modalCancel').onclick = closeConfirm;
+document.getElementById('modalConfirm').onclick = function(){
+  const btn = this;
+  const a = assets.find(x=>x.id===pendingAction);
+  if(!a || btn.disabled) return;
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span> Creating…`;
+  setTimeout(()=>{
+    a.scheduled = true;
+    toast(`Work order created for ${a.name}`, 'ti-circle-check', 'success');
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+    closeConfirm();
+    closeDrawer();
+    renderAll();
+    const row = document.querySelector(`tr[data-asset="${a.id}"]`);
+    if(row) row.classList.add('row-flash');
+  }, 900);
+};
+
+/* ---------- EVENTS ---------- */
+document.getElementById('drawerClose').onclick = closeDrawer;
+document.getElementById('scrim').onclick = closeDrawer;
+
+document.getElementById('reviewPrioritiesBtn').onclick = ()=>{
+  document.querySelector('.panel-title')?.scrollIntoView; // no-op safeguard
+  const target = document.querySelector('#queueBody');
+  target.closest('.panel').scrollIntoView({ behavior:'smooth', block:'center' });
+  const firstRow = target.querySelector('tr');
+  if(firstRow) firstRow.classList.add('row-flash');
+};
+
+document.getElementById('viewAllBtn').onclick = ()=>{ queueShowAll = !queueShowAll; renderMpiRanking(); };
+
+document.getElementById('searchInput').oninput = (e)=>{ searchTerm = e.target.value.toLowerCase(); renderMpiRanking(); };
+
+function closeAllDropdowns(){
+  document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open'));
+}
+function toggleDropdown(id){
+  const el = document.getElementById(id);
+  const wasOpen = el.classList.contains('open');
+  closeAllDropdowns();
+  if(!wasOpen) el.classList.add('open');
+}
+document.getElementById('bellBtn').onclick = (e)=>{ e.stopPropagation(); toggleDropdown('bellDropdown'); };
+document.getElementById('settingsBtn').onclick = (e)=>{ e.stopPropagation(); toggleDropdown('settingsDropdown'); };
+document.getElementById('userBtn').onclick = (e)=>{ e.stopPropagation(); toggleDropdown('userDropdown'); };
+document.getElementById('avatarBtn').onclick = (e)=>{ e.stopPropagation(); toggleDropdown('userDropdown'); };
+document.getElementById('navAlerts').onclick = (e)=>{ e.stopPropagation(); toggleDropdown('bellDropdown'); };
+document.getElementById('navSettings').onclick = (e)=>{ e.stopPropagation(); toggleDropdown('settingsDropdown'); };
+document.addEventListener('click', closeAllDropdowns);
+document.querySelectorAll('.dropdown').forEach(d=> d.onclick = (e)=> e.stopPropagation());
+
+document.getElementById('logoutBtn').onclick = ()=>{
+  closeAllDropdowns();
+  try{ localStorage.removeItem('imdss_user'); }catch(e){}
+  window.location.href = 'login.html';
+};
+
+document.getElementById('darkToggle').onclick = function(){
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+  this.classList.toggle('on', !dark);
+  try{ localStorage.setItem('imdss_theme', dark ? 'light' : 'dark'); }catch(e){}
+};
+document.getElementById('notifToggle').onclick = function(){ this.classList.toggle('on'); };
+document.getElementById('refreshToggle').onclick = function(){ this.classList.toggle('on'); };
+
+/* sidebar tab switching */
+document.querySelectorAll('.nav-item[data-tab]').forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll('.nav-item[data-tab]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.getAttribute('data-tab');
+    document.querySelectorAll('.section[data-tab-section]').forEach(s=>{
+      s.classList.toggle('hidden', s.getAttribute('data-tab-section') !== tab);
+    });
+    const titles = { decision:'Decision Center', dashboard:'Dashboard', twin:'Digital Twin', assets:'Assets', maintenance:'Maintenance', scheduled:'Scheduled', simulator:'Scenario Simulator', reports:'Reports', copilot:'Decision Assistant' };
+    document.getElementById('pageTitle').textContent = titles[tab];
+    if(tab==='reports' || tab==='dashboard') setTimeout(renderTrendCharts, 20);
+    if(tab==='copilot') initChat();
+  };
+});
+
+document.getElementById('chatSendBtn').onclick = sendChatMessage;
+document.getElementById('chatInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendChatMessage(); });
+
+/* ---------- THEME RESTORE ---------- */
+try{
+  const savedTheme = localStorage.getItem('imdss_theme');
+  if(savedTheme === 'dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+    const dt = document.getElementById('darkToggle');
+    if(dt) dt.classList.add('on');
+  }
+}catch(e){}
+applyCurrentUser();
+
+/* ---------- FULL RENDER ---------- */
+function renderAll(){
+  renderKpis();
+  renderCopilot();
+  renderCopilotBig();
+  renderRecPanel();
+  renderMpiRanking();
+  renderDecisionLog();
+  renderScheduled();
+  renderTimeline();
+  renderFactors();
+  renderHealth();
+  renderSensors();
+  renderAlerts();
+  renderTwin();
+  renderScenarios();
+  try{ renderMatrix(); }catch(e){ console.error('Chart render skipped:', e); }
+}
+renderAll();
+try{ renderTrendCharts(); }catch(e){ console.error('Trend chart render skipped:', e); }
+</script>
+</body>
+</html>
